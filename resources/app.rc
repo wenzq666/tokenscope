@@ -1,0 +1,74 @@
+#include <windows.h>
+
+1 RT_MANIFEST "app.manifest"
+
+#ifdef TOKENSCOPE_HAVE_ICON
+101 ICON "app.ico"
+#endif
+
+1 VERSIONINFO
+FILEVERSION 0,4,0,0
+PRODUCTVERSION 0,4,0,0
+FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+FILEFLAGS 0
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_APP
+FILESUBTYPE 0
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "FileDescription", "TokenScope local agent usage statistics\0"
+            VALUE "FileVersion", "0.4.0\0"
+            VALUE "InternalName", "TokenScope\0"
+            VALUE "OriginalFilename", "TokenScope.exe\0"
+            VALUE "ProductName", "TokenScope\0"
+            VALUE "ProductVersion", "0.4.0\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+102 RCDATA "../vendor/THIRD-PARTY-NOTICES.txt"
+201 RCDATA "brands/codex.png"
+202 RCDATA "brands/claude-code.png"
+203 RCDATA "brands/trae.png"
+204 RCDATA "brands/workbuddy.png"
+205 RCDATA "brands/deepseek-harness.png"
+206 RCDATA "brands/opencode.png"
+207 RCDATA "brands/cursor.png"
+208 RCDATA "brands/github-copilot.png"
+209 RCDATA "brands/codebuddy.png"
+210 RCDATA "brands/gemini.png"
+211 RCDATA "brands/qwen-code.png"
+212 RCDATA "brands/kimi.png"
+213 RCDATA "brands/amp.png"
+214 RCDATA "brands/antigravity.png"
+215 RCDATA "brands/cline.png"
+216 RCDATA "brands/roo-code.png"
+217 RCDATA "brands/kilo-code.png"
+218 RCDATA "brands/mimo-code.png"
+219 RCDATA "brands/codebuff.png"
+220 RCDATA "brands/commandcode.png"
+221 RCDATA "brands/pi.png"
+222 RCDATA "brands/openclaw.png"
+223 RCDATA "brands/junie.png"
+224 RCDATA "brands/grok-build.png"
+225 RCDATA "brands/jcode.png"
+226 RCDATA "brands/devin.png"
+227 RCDATA "brands/zcode.png"
+228 RCDATA "brands/opencodereview.png"
+229 RCDATA "brands/crush.png"
+230 RCDATA "brands/droid.png"
+231 RCDATA "brands/fx.png"
+232 RCDATA "brands/goose.png"
+233 RCDATA "brands/hermes.png"
+234 RCDATA "brands/kiro.png"
+235 RCDATA "brands/mux.png"
+236 RCDATA "brands/orca.png"
+237 RCDATA "brands/warp.png"
+238 RCDATA "brands/zed.png"

@@ -1,0 +1,657 @@
+[
+  {
+    "name": "Codex",
+    "file": "codex.svg",
+    "url": "https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.95.1/icons/codex-color.svg",
+    "bytes": 1769,
+    "resource": "codex.png",
+    "officialPage": "https://github.com/lobehub/lobe-icons",
+    "license": "MIT (LobeHub icons 1.95.1; vendor/LICENSE.lobe-icons); OpenAI brand and trademark rights retained",
+    "licenseUrl": "https://raw.githubusercontent.com/lobehub/lobe-icons/master/LICENSE",
+    "modifications": "Rasterized and resized to 64 x 64 for the native application.",
+    "sha256": "4a2f43ce46b5b6e3722c95088f88d26ef91e6a8c2e598e70642a1c54367386e4",
+    "resourceBytes": 1420,
+    "resourceSha256": "7f92bea5ed833df7e64973686b0afc67816a957b3aab5093dabef13fd846045b",
+    "attributionReviewedAtUtc": "2026-10-09T07:06:58.0095306Z",
+    "upstreamAssetHashVerifiedAtUtc": "2026-10-09T07:06:58.0095306Z"
+  },
+  {
+    "name": "Claude Code",
+    "file": "claude-code.png",
+    "url": "https://assets.claude.com/95a868946ac8a31e5ff832e2899f294aa368b836.png?w=32&h=32",
+    "bytes": 1198,
+    "resource": "claude-code.png",
+    "officialPage": "https://claude.com/",
+    "license": "Official brand asset; no separate open-source asset license asserted; not relicensed under TokenScope MIT; brand and trademark rights retained",
+    "sha256": "4004381309500f25e49a1ae639912ce307ea81da74cc383954a1ac8b9d343fe6",
+    "resourceBytes": 5499,
+    "resourceSha256": "945c8cea7d659268cfb8de5bb74333411a36f636a02d345a893f76e9180b803a",
+    "attributionReviewedAtUtc": "2026-10-09T07:06:58.0095306Z"
+  },
+  {
+    "name": "TRAE",
+    "file": "trae.png",
+    "url": "https://lf-cdn.trae.com.cn/obj/trae-com-cn/trae_website_prod_cn/favicon.png",
+    "bytes": 488,
+    "resource": "trae.png",
+    "officialPage": "https://www.trae.cn/",
+    "license": "Official brand asset; no separate open-source asset license asserted; not relicensed under TokenScope MIT; brand and trademark rights retained",
+    "sha256": "49d523938a22af5a70dd79923725df38674823026e2f917e76337319969f4af4",
+    "resourceBytes": 1175,
+    "resourceSha256": "71fd3d57c6e593f056b182bcecd1f906fc8b6cb41d960ff2e4e88b98d3f3c724",
+    "attributionReviewedAtUtc": "2026-10-09T07:06:58.0095306Z"
+  },
+  {
+    "name": "WorkBuddy",
+    "file": "workbuddy.svg",
+    "url": "https://download.codebuddy.cn/web/workbuddy/788eb1c5ba3681efa98cf7b58ae688e293c1bb34/assets/logo.svg",
+    "bytes": 4142,
+    "resource": "workbuddy.png",
+    "officialPage": "https://www.codebuddy.cn/",
+    "license": "Official brand asset; no separate open-source asset license asserted; not relicensed under TokenScope MIT; brand and trademark rights retained",
+    "sha256": "10ccbc099e7bc3d5ff12c315c4edd7b21386aa7166c1ec19997b3d55010d5c7d",
+    "resourceBytes": 4518,
+    "resourceSha256": "d264e35198327e33e805cbf8a7961a8013d41e4207f8a0ab832ab17660913603",
+    "attributionReviewedAtUtc": "2026-10-09T07:06:58.0095306Z"
+  },
+  {
+    "name": "DeepSeek Harness",
+    "file": "deepseek-harness.svg",
+    "url": "https://www.deepseek.com/harness/favicon.svg",
+    "bytes": 3864,
+    "resource": "deepseek-harness.png",
+    "officialPage": "https://www.deepseek.com/harness/",
+    "license": "Official brand asset; no separate open-source asset license asserted; not relicensed under TokenScope MIT; brand and trademark rights retained",
+    "sha256": "d19b62d73c8db53d5a241dfb4adbc7cad259557e5da8da6587a86d7dd4b06382",
+    "resourceBytes": 1718,
+    "resourceSha256": "42d47f9ad39f84113dbf477daf111ae9966486bd8fd2da59a9641b1c912d8c49",
+    "attributionReviewedAtUtc": "2026-10-09T07:06:58.0095306Z"
+  },
+  {
+    "name": "OpenCode",
+    "file": "opencode.png",
+    "url": "https://opencode.ai/favicon-96x96-v3.png",
+    "bytes": 536,
+    "resource": "opencode.png",
+    "officialPage": "https://opencode.ai/",
+    "license": "Official brand asset; no separate open-source asset license asserted; not relicensed under TokenScope MIT; brand and trademark rights retained",
+    "sha256": "aa34092540de60c889610edfa3c25316e215f12d88af29cfba530d09aee7265c",
+    "resourceBytes": 604,
+    "resourceSha256": "66462dc48f9a501515581e070e15427bec4e3848c0521e2531bd9a3e4e716f02",
+    "attributionReviewedAtUtc": "2026-10-09T07:06:58.0095306Z"
+  },
+  {
+    "name": "Cursor",
+    "file": "cursor.svg",
+    "resource": "cursor.png",
+    "url": "https://cursor.com/marketing-static/favicon-light.svg",
+    "officialPage": "https://cursor.com/brand",
+    "software": [
+      "Cursor"
+    ],
+    "bytes": 4388,
+    "sha256": "78f169abca311d70e18ada789ccf1a55b4ca0306822f21a9ab0c2658ed88dbe0",
+    "resourceBytes": 1739,
+    "resourceSha256": "bc881d90366ce9a725f2a41a110873a90d6a9d7665b36b1a81983c435c35c95a",
+    "verifiedAtUtc": "2026-10-08T13:23:03.684Z",
+    "license": "Official brand asset; no separate open-source asset license asserted; not relicensed under TokenScope MIT; brand and trademark rights retained"
+  },
+  {
+    "name": "GitHub Copilot",
+    "file": "github-copilot.svg",
+    "resource": "github-copilot.png",
+    "url": "https://raw.githubusercontent.com/primer/octicons/main/icons/copilot-24.svg",
+    "officialPage": "https://github.com/primer/octicons",
+    "license": "MIT (Octicons); GitHub trademarks retained",
+    "software": [
+      "GitHub Copilot"
+    ],
+    "bytes": 1689,
+    "sha256": "eeafb3c2f333e04ccf7d031ae215f7adafaed4c6352556b0bf79496e048bcdd7",
+    "resourceBytes": 1391,
+    "resourceSha256": "3ea77ba63bdf2c4d80e0659107da90b79fd0a19aa80fbb20a98272e43bd0493f",
+    "verifiedAtUtc": "2026-10-08T13:23:03.685Z"
+  },
+  {
+    "name": "CodeBuddy",
+    "file": "codebuddy.svg",
+    "resource": "codebuddy.png",
+    "url": "https://download.codebuddy.cn/web/website/a156fee78f35e874d407848198e5f96a4cf383ef/assets/logo.svg",
+    "officialPage": "https://www.codebuddy.cn/",
+    "software": [
+      "CodeBuddy"
+    ],
+    "bytes": 4186,
+    "sha256": "149baa45b9f9370c15f20d599afe381aa138e4fc13acf503f435c571ac93ecf5",
+    "resourceBytes": 5979,
+    "resourceSha256": "85dcbd5fa30ccf47649ba9e7146214c0cc5e1ff1231953237e03efe8dc390837",
+    "verifiedAtUtc": "2026-10-08T13:23:03.685Z",
+    "license": "Official brand asset; no separate open-source asset license asserted; not relicensed under TokenScope MIT; brand and trademark rights retained"
+  },
+  {
+    "name": "Google Gemini",
+    "file": "gemini-brand.png",
+    "resource": "gemini.png",
+    "url": "https://www.gstatic.com/lamda/images/gemini_favicon_f069958c85030456e93de685481c559f160ea06b.png",
+    "officialPage": "https://gemini.google.com/",
+    "software": [
+      "Gemini CLI",
+      "Gemini Deep Research"
+    ],
+    "bytes": 17780,
+    "sha256": "5dccbfbde13e1c1c222eeccfe49c9986adc9c75f741be1ae0e6626a92fad4765",
+    "resourceBytes": 3691,
+    "resourceSha256": "3bbafc5fcd830e38dbc414a63b61b50897a54b708728f93f240d55a27434f1d1",
+    "verifiedAtUtc": "2026-10-08T13:23:03.685Z",
+    "license": "Official brand asset; no separate open-source asset license asserted; not relicensed under TokenScope MIT; brand and trademark rights retained"
+  },
+  {
+    "name": "Qwen Code",
+    "file": "qwen-code.png",
+    "resource": "qwen-code.png",
+    "url": "https://raw.githubusercontent.com/QwenLM/qwen-code/main/packages/desktop/src-tauri/icons/64x64.png",
+    "officialPage": "https://github.com/QwenLM/qwen-code",
+    "software": [
+      "Qwen Code"
+    ],
+    "bytes": 6136,
+    "sha256": "1272435949ba966b178a84b835c6fb450a2cf435d9582331e9114fd656ce08ed",
+    "resourceBytes": 6014,
+    "resourceSha256": "09c8853bf275263bc5c997a83e3456c8714c60c66eb0595576affc5bbf0ee183",
+    "verifiedAtUtc": "2026-10-08T13:23:03.685Z",
+    "license": "Apache-2.0 (Qwen Code repository; vendor/LICENSE.qwen-code); brand and trademark rights retained",
+    "licenseUrl": "https://raw.githubusercontent.com/QwenLM/qwen-code/main/LICENSE",
+    "modifications": "Re-encoded and resized to 64 x 64 PNG for the native application; original artwork and colors retained.",
+    "upstreamAssetHashVerifiedAtUtc": "2026-10-09T07:06:58.0095306Z"
+  },
+  {
+    "name": "Kimi",
+    "file": "kimi-brand.png",
+    "resource": "kimi.png",
+    "url": "https://www.kimi.com/pwa-192.png",
+    "officialPage": "https://www.kimi.com/",
+    "software": [
+      "Kimi",
+      "Kimi Code CLI"
+    ],
+    "bytes": 21645,
+    "sha256": "6c14f9c3062e953b3ed57ae3e19db931c1c1bba38d4d8d55550544f31d55e469",
+    "resourceBytes": 3860,
+    "resourceSha256": "770f182e594393e63079e00c5c635bbe8a5f567b781259580defa7a37a1c5701",
+    "verifiedAtUtc": "2026-10-08T13:23:03.685Z",
+    "license": "Official brand asset; no separate open-source asset license asserted; not relicensed under TokenScope MIT; brand and trademark rights retained"
+  },
+  {
+    "name": "Amp",
+    "file": "client-amp.png",
+    "resource": "amp.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-amp.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-amp.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Amp"
+    ],
+    "bytes": 168176,
+    "sha256": "c22766802255b51bb09a912c4be1775d6910d5f5457469b520b69bfd5b7715a4",
+    "resourceBytes": 7517,
+    "resourceSha256": "6c65773f4271ee0c00890f7c528b2a0724257dee103eb7df0fed7decb7fd0072",
+    "verifiedAtUtc": "2026-10-09T02:28:37.719Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Antigravity",
+    "file": "client-antigravity.png",
+    "resource": "antigravity.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-antigravity.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-antigravity.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Antigravity",
+      "Antigravity CLI"
+    ],
+    "bytes": 26011,
+    "sha256": "90ecc21be66e4e324d6ec0d07ae7e005cdffc54710c22ba5b77bf7384fb001a7",
+    "resourceBytes": 2537,
+    "resourceSha256": "fa6bde4842fe551167489a631763349bf82e9cb3f5513ac2786387e01b05d632",
+    "verifiedAtUtc": "2026-10-09T02:28:37.723Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Cline",
+    "file": "client-cline.png",
+    "resource": "cline.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-cline.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-cline.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Cline"
+    ],
+    "bytes": 3173,
+    "sha256": "3743e030729b57229fedbfc765759bd3e6c0c4709a467d5885b156947041e6a0",
+    "resourceBytes": 2231,
+    "resourceSha256": "a7818b0a894fb4e6ef65e043a38383eacb678968ba7ce04a4ab7aa6f1f26978b",
+    "verifiedAtUtc": "2026-10-09T02:28:37.723Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Roo Code",
+    "file": "client-roocode.png",
+    "resource": "roo-code.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-roocode.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-roocode.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Roo Code"
+    ],
+    "bytes": 1494,
+    "sha256": "ea6e9f578fce4e3536d95a06c13109412bfbdc555a9062e8b89087df8e831696",
+    "resourceBytes": 1241,
+    "resourceSha256": "7f3bcab443f1b47e4bf47705e90caed1d86c494156b540b88f33187d81387e73",
+    "verifiedAtUtc": "2026-10-09T02:28:37.724Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Kilo Code",
+    "file": "client-kilocode.png",
+    "resource": "kilo-code.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-kilocode.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-kilocode.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Kilo Code",
+      "Kilo CLI"
+    ],
+    "bytes": 774,
+    "sha256": "ca614804c7864580abddffef05a3f5868da14ae6be0e2702da491732e0308216",
+    "resourceBytes": 1982,
+    "resourceSha256": "c8730029df646e07c64387bd6688334d98d6e1fd4a1ed00b261bc6ccd1c0c8fc",
+    "verifiedAtUtc": "2026-10-09T02:28:37.724Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "MiMo Code",
+    "file": "client-micode.jpg",
+    "resource": "mimo-code.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-micode.jpg",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-micode.jpg",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "MiMo Code"
+    ],
+    "bytes": 10160,
+    "sha256": "37095e5417348f56c997373045b8e975d6c4d92b0d2dcad521f1ce66090d0f85",
+    "resourceBytes": 1363,
+    "resourceSha256": "d2027326f6e84615c8e3a497e646cbd9498896670102eb7864c6246a930de157",
+    "verifiedAtUtc": "2026-10-09T02:28:37.724Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Codebuff",
+    "file": "client-codebuff.png",
+    "resource": "codebuff.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-codebuff.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-codebuff.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Codebuff"
+    ],
+    "bytes": 1090,
+    "sha256": "ad3525af2ecdfd003c1a2bae34386adaef98cbaeee7234b7577856014f5d9dc1",
+    "resourceBytes": 691,
+    "resourceSha256": "23ed9af01b382f8e41e5510bb4c8634c5e31b2f76f4a857a8ac492780fe396cb",
+    "verifiedAtUtc": "2026-10-09T02:28:37.725Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "CommandCode",
+    "file": "client-commandcode.png",
+    "resource": "commandcode.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-commandcode.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-commandcode.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "CommandCode"
+    ],
+    "bytes": 111884,
+    "sha256": "2d8a9cdcfa592037eb3aac96212319c40826e06587d29cbfe8c8959e834c3890",
+    "resourceBytes": 1413,
+    "resourceSha256": "f4396577ac1cf72a52f956ec85ca9c1e4fcc7788b676a7344959ea5b98d7d2eb",
+    "verifiedAtUtc": "2026-10-09T02:28:37.725Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Pi",
+    "file": "client-pi.png",
+    "resource": "pi.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-pi.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-pi.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Pi",
+      "Oh My Pi"
+    ],
+    "bytes": 316,
+    "sha256": "7541b1ec9ae26d11f5ed6ac4472278fee116989a136cf4d8d8a11f62e96e1829",
+    "resourceBytes": 634,
+    "resourceSha256": "237f77dfcb5c534c177967b8309be9e1d4cd37277d2326a89662859949a3c010",
+    "verifiedAtUtc": "2026-10-09T02:28:37.725Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "OpenClaw",
+    "file": "client-openclaw.jpg",
+    "resource": "openclaw.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-openclaw.jpg",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-openclaw.jpg",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "OpenClaw"
+    ],
+    "bytes": 25699,
+    "sha256": "0c4a23f702882b885f68c95a62c15b91f3371df22bbcd3cf81e069f906ae7efe",
+    "resourceBytes": 5810,
+    "resourceSha256": "bf14dad38f4bb22cba08b482e8b7c397d83120baec83fa4ec0bbe8a300b3353f",
+    "verifiedAtUtc": "2026-10-09T02:28:37.725Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Junie",
+    "file": "client-junie.png",
+    "resource": "junie.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-junie.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-junie.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Junie"
+    ],
+    "bytes": 92337,
+    "sha256": "41b16012713c00ab40d4383161d853937907bcc66219855c4fa4834394bbeca0",
+    "resourceBytes": 4534,
+    "resourceSha256": "52c296a83e660c773b79de8b1be841ce5dc3b7b84c7c2a3912df00c6db549b2f",
+    "verifiedAtUtc": "2026-10-09T02:28:37.726Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Grok Build",
+    "file": "client-grok.png",
+    "resource": "grok-build.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-grok.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-grok.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Grok Build"
+    ],
+    "bytes": 8532,
+    "sha256": "6bebf0c70edd78022a74819fc5c7518af2841860c0f695bfc800087be2504400",
+    "resourceBytes": 1613,
+    "resourceSha256": "e2f51e83a781ff6753311c6754d8cdbd59ed5c273b29e65b55ba8af3599eae4f",
+    "verifiedAtUtc": "2026-10-09T02:28:37.726Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Jcode",
+    "file": "client-jcode.png",
+    "resource": "jcode.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-jcode.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-jcode.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Jcode"
+    ],
+    "bytes": 43249,
+    "sha256": "7c3eb154fd3bae2742798670e1d80562e50c103f52e135ade5ab58732b3a6ede",
+    "resourceBytes": 3480,
+    "resourceSha256": "901ea37e494e689bd2e386a64a248f3bfe38a4addbec56656058694b8b1bdf9d",
+    "verifiedAtUtc": "2026-10-09T02:28:37.726Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Devin",
+    "file": "client-devin.jpg",
+    "resource": "devin.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-devin.jpg",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-devin.jpg",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Devin",
+      "Devin CLI",
+      "Devin Desktop"
+    ],
+    "bytes": 9062,
+    "sha256": "5a24c46c041ede1e6fb335e65d3cd112a119b9616a03a80e15a279a8943a946a",
+    "resourceBytes": 1395,
+    "resourceSha256": "5137ac29b1cbc13c37abc212d42d5b3a41da030b4f7b2026e57d8eb794a09e57",
+    "verifiedAtUtc": "2026-10-09T02:28:37.726Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "ZCode",
+    "file": "client-zcode.png",
+    "resource": "zcode.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-zcode.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-zcode.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "ZCode"
+    ],
+    "bytes": 9603,
+    "sha256": "1dcbca35b5988fa3cfde8a14fd4c9509760c7f855683bca7f2721fb5bd0eecd8",
+    "resourceBytes": 2390,
+    "resourceSha256": "a488e2e75c1547bb9061bdde92bf6cf722f1b2f85e0b69ee46ffc516b4b1730e",
+    "verifiedAtUtc": "2026-10-09T02:28:37.727Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "OpenCodeReview",
+    "file": "client-opencodereview.png",
+    "resource": "opencodereview.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-opencodereview.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-opencodereview.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "OpenCodeReview"
+    ],
+    "bytes": 12909,
+    "sha256": "13fce6a4cdd19983e6cb80858836c9b9ef533738a21f192ac2c92b53c19baec3",
+    "resourceBytes": 1762,
+    "resourceSha256": "3f49aec407772639e63903a0fdff9d0c45fa07b189e9851bad3316bf8857ad48",
+    "verifiedAtUtc": "2026-10-09T02:28:37.727Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Crush",
+    "file": "client-crush.png",
+    "resource": "crush.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-crush.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-crush.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Crush"
+    ],
+    "bytes": 49983,
+    "sha256": "2a92e5dafb44b8f9661421db739b4f97a58b10192638558f72effdb200e30c14",
+    "resourceBytes": 5117,
+    "resourceSha256": "12a2c782fa576dc9d85dcfd3f4eb45f632f09eb8d8195ae656edcaa13bb57b43",
+    "verifiedAtUtc": "2026-10-09T02:28:37.727Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Droid",
+    "file": "client-droid.png",
+    "resource": "droid.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-droid.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-droid.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Droid"
+    ],
+    "bytes": 8134,
+    "sha256": "1eab951a28255574aea52b61b0eea38ece7373ded2797921b1eb7cc44b5822b4",
+    "resourceBytes": 2943,
+    "resourceSha256": "e4c02f326442deb1b2e578cc76745838227e5c0b8e9021c2cc4b5ea735493fb9",
+    "verifiedAtUtc": "2026-10-09T02:28:37.727Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Fx",
+    "file": "client-fx.png",
+    "resource": "fx.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-fx.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-fx.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Fx"
+    ],
+    "bytes": 6378,
+    "sha256": "56a8ebd874a7d73f47eeecbb3196c10398916366cdd1908dc4dfe38a2dd01d79",
+    "resourceBytes": 2174,
+    "resourceSha256": "2a0d760e9dcd246f3c101a655d09f4e56ae26c5bac8d1986ed488c5051b0343d",
+    "verifiedAtUtc": "2026-10-09T02:28:37.727Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Goose",
+    "file": "client-goose.png",
+    "resource": "goose.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-goose.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-goose.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Goose"
+    ],
+    "bytes": 5359,
+    "sha256": "62486d8892be906a30de5edb9ff593d0e73de78b321bfe5384afd4a935a22140",
+    "resourceBytes": 2427,
+    "resourceSha256": "40267e2377c2944f83b9223daf69a67a54871d5320c6f6404352df11e4184d13",
+    "verifiedAtUtc": "2026-10-09T02:28:37.728Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Hermes Agent",
+    "file": "client-hermes.png",
+    "resource": "hermes.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-hermes.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-hermes.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Hermes Agent"
+    ],
+    "bytes": 985912,
+    "sha256": "b073c4d3760528c3711d266803d850153d23acfa16e6c82e53a06409cade84f3",
+    "resourceBytes": 5059,
+    "resourceSha256": "b599713b4d4e8e20d1826b2c195b8703dc3d1dca0c35eb5d21685ec7e3694c2a",
+    "verifiedAtUtc": "2026-10-09T02:28:37.729Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Kiro",
+    "file": "client-kiro.jpg",
+    "resource": "kiro.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-kiro.jpg",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-kiro.jpg",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Kiro"
+    ],
+    "bytes": 10357,
+    "sha256": "736ae5cbf57ddf93bbce9b317188be014b4636189383029aaf697a21312f7952",
+    "resourceBytes": 3461,
+    "resourceSha256": "c5a9de988e86fb42b43b5fa23d0eba82937645af3a2dce15fb108232ff36be84",
+    "verifiedAtUtc": "2026-10-09T02:28:37.729Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Mux",
+    "file": "client-mux.png",
+    "resource": "mux.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-mux.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-mux.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Mux"
+    ],
+    "bytes": 1685,
+    "sha256": "0ae255a1104724e6824b6d00125a6d5e316819472690469e3d64fce8474504e8",
+    "resourceBytes": 645,
+    "resourceSha256": "b1cfd2eaf786496196430d2edcccba8d969e54d39d588e10de88d7771cc83748",
+    "verifiedAtUtc": "2026-10-09T02:28:37.729Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Orca",
+    "file": "client-orca.png",
+    "resource": "orca.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-orca.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-orca.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Orca"
+    ],
+    "bytes": 67939,
+    "sha256": "1c3be113fc926e5ba5c4fa2acb9ebe8e0b9f5be8aac004d3eb1b3474d645800b",
+    "resourceBytes": 4768,
+    "resourceSha256": "4904fe2e045536eefc185c10134b5cd6809bc098129d9037ebe97cb5dc6b031b",
+    "verifiedAtUtc": "2026-10-09T02:28:37.73Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Warp",
+    "file": "client-warp.png",
+    "resource": "warp.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-warp.png",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-warp.png",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Warp"
+    ],
+    "bytes": 5234,
+    "sha256": "43d38cf382f8836a757393d7461af48147633b19ea938bcaed06821c85acdfab",
+    "resourceBytes": 893,
+    "resourceSha256": "c456cc81297fe582f342b52ff53a937878ee13603c88dab61a28433deb4f8eb5",
+    "verifiedAtUtc": "2026-10-09T02:28:37.73Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  },
+  {
+    "name": "Zed Agent",
+    "file": "client-zed.webp",
+    "resource": "zed.png",
+    "url": "https://raw.githubusercontent.com/missuo/tokens/main/.github/assets/client-zed.webp",
+    "referenceRepository": "https://github.com/missuo/tokens",
+    "referencePath": ".github/assets/client-zed.webp",
+    "referenceArchiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "software": [
+      "Zed Agent"
+    ],
+    "bytes": 11452,
+    "sha256": "4ae23d9c47e60502315c3c806904628509cee092aa029f251201855ba8603b7f",
+    "resourceBytes": 3093,
+    "resourceSha256": "781fe590da92aca9ab7fcc25bf766c2da2f89850aa16eea9405262c728459f47",
+    "verifiedAtUtc": "2026-10-09T02:28:37.73Z",
+    "license": "Reference repository MIT (vendor/LICENSE.tokens); third-party brand and trademark rights remain with their owners"
+  }
+]

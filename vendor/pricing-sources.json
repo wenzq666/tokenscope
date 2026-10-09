@@ -1,0 +1,23 @@
+{
+  "retrievedAt": "2026-10-09",
+  "generation": "First-party text/code tariffs and selected hosted endpoints; no upstream implementation code copied.",
+  "litellm": {
+    "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+    "sha256": "067885e4d12cfb82b46bf7a23d5c55a146e1c0bc14f221df0373fc8d21cac2e0",
+    "license": "MIT",
+    "entries": 367
+  },
+  "modelsDev": {
+    "url": "https://models.dev/api.json",
+    "sha256": "fa2b8822f1f8c9157f526dc477b86008f73e463414f4e7765ed0ce50006eeef1",
+    "license": "MIT",
+    "entries": 1642
+  },
+  "generatedSha256": "ef3f139dbe2cba8f4de5d73aa7086a079fe3543ee2414a0539871e8d63451c05",
+  "cursor": {
+    "url": "https://cursor.com/docs/models-and-pricing",
+    "verifiedAt": "2026-10-09",
+    "entries": 2,
+    "description": "Composer 2.5 standard/fast; manually verified tariff facts in pricing.cpp, cache-write dash remains unknown."
+  }
+}

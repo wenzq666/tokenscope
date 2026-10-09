@@ -1,0 +1,19 @@
+* text=auto
+*.cpp text eol=lf
+*.h text eol=lf
+*.c text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.ps1 text eol=crlf
+*.rc text eol=crlf
+*.manifest text eol=lf
+*.exe binary
+*.png binary
+*.ico binary
+
+# Preserve vendor checksums and byte-identical release artifacts.
+vendor/** -text -whitespace
+design/assets/brands/** -text -whitespace
+resources/brands/** -text -whitespace
+resources/pricing* -text -whitespace
+dist/** -text -whitespace

@@ -1,0 +1,39 @@
+.tools/
+build/
+.test-data/
+
+# Publish only the current, verified release and its notices.
+dist/*
+!dist/TokenScope.exe
+!dist/build-report.json
+!dist/LICENSE
+!dist/THIRD-PARTY-NOTICES.txt
+!dist/SHA256SUMS.txt
+!dist/README.md
+
+# Local usage, account credentials, and workstation settings.
+*.sqlite
+!vendor/LICENSE.sqlite
+*.sqlite3
+*.sqlite3-*
+*.db
+*.db-*
+settings.ini
+credential.bin
+.env
+.env.*
+!.env.example
+*.pem
+*.pfx
+*.key
+
+# Downloaded reference pages are research artifacts, not project sources.
+design/references/*.html
+
+*.user
+*.pdb
+*.ilk
+*.obj
+*.o
+.vs/
+.cache/

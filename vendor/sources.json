@@ -1,0 +1,133 @@
+{
+  "sqlite": {
+    "version": "3.53.4",
+    "url": "https://www.sqlite.org/2026/sqlite-amalgamation-3530400.zip",
+    "sha3_256": "628a44cfe82c66aed1ccbbe85a562d2e33ebe64b3288981ed76285612227934e",
+    "sha256": "1e71ddf93849c6a6ecf58b827c0692073d2dd7ee40196158068f7b29f422e87d",
+    "license": "Public domain"
+  },
+  "yyjson": {
+    "version": "0.12.0",
+    "url": "https://github.com/ibireme/yyjson/tree/0.12.0",
+    "license": "MIT"
+  },
+  "toolchain": {
+    "version": "20261006",
+    "url": "https://github.com/mstorsjo/llvm-mingw/releases/download/20261006/llvm-mingw-20261006-ucrt-x86_64.zip",
+    "sha256": "317492c456aa27ee607a5919f1d2d38dcdc1112516a24d0bf4b00d078f52d17a",
+    "shipped": false,
+    "clangVersion": "23.1.3",
+    "llvmCommit": "0d261d1ca552c95a8f007e061c787ac7132fbcbc"
+  },
+  "files": [
+    {
+      "path": "vendor/COPYING.MinGW-w64-runtime.txt",
+      "sha256": "1db8da07b436c68833c0673ffee3d9fcb2526047f3820b81661865dfedc79a1f"
+    },
+    {
+      "path": "vendor/COPYING.MinGW-w64.txt",
+      "sha256": "f38e6194bd3bfa1b654f118e5acefe0aead437bbe669eee43957ccc65a7127f1"
+    },
+    {
+      "path": "vendor/COPYING.winpthreads.txt",
+      "sha256": "63263614cdd29f2f93cba85e992f041b31f9fc7b4033692f31269489a8a1b177"
+    },
+    {
+      "path": "vendor/LICENSE.llvm-mingw",
+      "sha256": "8e5db0129069005be2a07be3297e198888fd72fad62a13a611504660c6b7e3c7"
+    },
+    {
+      "path": "vendor/LICENSE.llvm-runtime",
+      "sha256": "8d85c1057d742e597985c7d4e6320b015a9139385cff4cbae06ffc0ebe89afee"
+    },
+    {
+      "path": "vendor/LICENSE.sqlite",
+      "sha256": "b8a856b53f9c49e0b07bad5f9c0a3a7a15eeec2949bfb01156100b1224537c2f"
+    },
+    {
+      "path": "vendor/LICENSE.yyjson",
+      "sha256": "45e384d3d52c73cba3a64d6e6c25d47cd738cd8a55c30629e3201046eda62947"
+    },
+    {
+      "path": "vendor/sqlite3.c",
+      "sha256": "b1dd5d74ec7f29055a6684fa06fb3c2f6821c87dd38f9a458dfd2e8a1db28189"
+    },
+    {
+      "path": "vendor/sqlite3.h",
+      "sha256": "919e7f2e8ed1d8f56ac17b412b8971c76aa5d1a879752cc6058f75e7d5910e1d"
+    },
+    {
+      "path": "vendor/THIRD-PARTY-NOTICES.txt",
+      "sha256": "06cfd73eb3fd2d2ea2c0549d0f431024a85c592d47d401a1c01f3c19f5367a5d"
+    },
+    {
+      "path": "vendor/yyjson.c",
+      "sha256": "ac2e9bbb2e2d9149d90878d40506a1d624fa0b33c979a11b61075c54782c6d6a"
+    },
+    {
+      "path": "vendor/yyjson.h",
+      "sha256": "175867c5493a5df648cec566717fa1c29aa2f6096f5f0cf1efad0b65e1f6d7b3"
+    },
+    {
+      "path": "vendor/zstddeclib.c",
+      "sha256": "06401e2078c8111752bc9ec351b995026c467a4b5df1f1602dbad0b5de72384b"
+    },
+    {
+      "path": "vendor/zstd.h",
+      "sha256": "9b4bc8245565c98ccfc61c07749928b57e7c0f6fddb0530c4f6aa1971893d88b"
+    },
+    {
+      "path": "vendor/LICENSE.zstd",
+      "sha256": "7055266497633c9025b777c78eb7235af13922117480ed5c674677adc381c9d8"
+    },
+    {
+      "path": "vendor/zstd_errors.h",
+      "sha256": "66a8c3f71d12ea6e797e4f622f31f3f8f81c41b36f48cad4f5de7d8bfb6aac0a"
+    },
+    {
+      "path": "vendor/LICENSE.lobe-icons",
+      "sha256": "add9d7531d1b21646317a8958e38fc727506fa39d24bdecb44154d943c82753a"
+    },
+    {
+      "path": "vendor/LICENSE.qwen-code",
+      "sha256": "55367b61ccd2a016a0159ad886bd66a3ee6cb5e873d0c75c803c897dd245b075"
+    }
+  ],
+  "zstd": {
+    "version": "1.5.7",
+    "url": "https://codeload.github.com/facebook/zstd/zip/refs/tags/v1.5.7",
+    "archive_sha256": "7897bc5d620580d9b7cd3539c44b59d78f3657d33663fe97a145e07b4ebd69a4",
+    "license": "BSD-3-Clause",
+    "generated": "Official build/single_file_libs/combine.py with -x legacy/zstd_legacy.h; decompression only"
+  },
+  "tokens_reference": {
+    "url": "https://github.com/missuo/tokens",
+    "archiveUrl": "https://codeload.github.com/missuo/tokens/zip/refs/heads/main",
+    "archiveSha256": "ff2159da7fb8b283b6075d8357fc22fdc8580babefd0a673f8eb8f82fa0f6c84",
+    "retrievedAt": "2026-10-09",
+    "license": "MIT",
+    "scope": "Ported client format semantics and UI/pricing reference; C++ native implementation, no bundled CLI/web runtime",
+    "pricingSources": "vendor/pricing-sources.json"
+  },
+  "icon_licenses": [
+    {
+      "name": "LobeHub icons",
+      "version": "1.95.1",
+      "url": "https://github.com/lobehub/lobe-icons",
+      "license": "MIT",
+      "licenseUrl": "https://raw.githubusercontent.com/lobehub/lobe-icons/master/LICENSE",
+      "licenseFile": "vendor/LICENSE.lobe-icons",
+      "retrievedAtUtc": "2026-10-09T07:06:58.0095306Z",
+      "scope": "Codex SVG and derived 64 x 64 PNG; OpenAI brand and trademark rights retained"
+    },
+    {
+      "name": "Qwen Code",
+      "url": "https://github.com/QwenLM/qwen-code",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://raw.githubusercontent.com/QwenLM/qwen-code/main/LICENSE",
+      "licenseFile": "vendor/LICENSE.qwen-code",
+      "retrievedAtUtc": "2026-10-09T07:06:58.0095306Z",
+      "scope": "Desktop application icon and derived 64 x 64 PNG; Google/Qwen copyright notices retained; trademark rights retained"
+    }
+  ]
+}
