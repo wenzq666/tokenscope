@@ -2,6 +2,7 @@
 #undef NDEBUG
 #endif
 #include "app.h"
+#include "i18n.h"
 #include "../src/heatmap_layout.h"
 #include <wincodec.h>
 #include <algorithm>
@@ -18,14 +19,21 @@ namespace {
 UsageRow Row(const std::string& day, const std::string& app, int64_t input, int64_t output,
              const std::string& provider = "", const std::string& model = "test-model") {
     UsageRow row;
-    row.day = day; row.software = app; row.input = input; row.output = output;
-    row.provider = provider; row.model = model; row.requests = 1;
+    row.day = day;
+    row.software = app;
+    row.input = input;
+    row.output = output;
+    row.provider = provider;
+    row.model = model;
+    row.requests = 1;
     return row;
 }
 
 SourceStatus Source(const std::string& id, const std::string& name, const std::string& status) {
     SourceStatus source;
-    source.id = id; source.name = name; source.status = status;
+    source.id = id;
+    source.name = name;
+    source.status = status;
     return source;
 }
 
@@ -37,19 +45,31 @@ struct Surface {
     Surface(int width = 1200, int height = 820) {
         rect = {0, 0, width, height};
         dc = CreateCompatibleDC(nullptr);
-        BITMAPINFO info{}; info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-        info.bmiHeader.biWidth = width; info.bmiHeader.biHeight = -height;
-        info.bmiHeader.biPlanes = 1; info.bmiHeader.biBitCount = 32; info.bmiHeader.biCompression = BI_RGB;
+        BITMAPINFO info{};
+        info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+        info.bmiHeader.biWidth = width;
+        info.bmiHeader.biHeight = -height;
+        info.bmiHeader.biPlanes = 1;
+        info.bmiHeader.biBitCount = 32;
+        info.bmiHeader.biCompression = BI_RGB;
         void* pixels = nullptr;
         bitmap = CreateDIBSection(dc, &info, DIB_RGB_COLORS, &pixels, nullptr, 0);
-        assert(bitmap && dc); previous = SelectObject(dc, bitmap);
+        assert(bitmap && dc);
+        previous = SelectObject(dc, bitmap);
     }
-    ~Surface() { SelectObject(dc, previous); DeleteObject(bitmap); DeleteDC(dc); }
+    ~Surface() {
+        SelectObject(dc, previous);
+        DeleteObject(bitmap);
+        DeleteDC(dc);
+    }
     void Save(const std::filesystem::path& path) {
-        IWICImagingFactory* factory = nullptr; IWICBitmap* source = nullptr;
-        IWICStream* stream = nullptr; IWICBitmapEncoder* encoder = nullptr; IWICBitmapFrameEncode* frame = nullptr;
-        HRESULT hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER,
-            IID_IWICImagingFactory, reinterpret_cast<void**>(&factory));
+        IWICImagingFactory* factory = nullptr;
+        IWICBitmap* source = nullptr;
+        IWICStream* stream = nullptr;
+        IWICBitmapEncoder* encoder = nullptr;
+        IWICBitmapFrameEncode* frame = nullptr;
+        HRESULT hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory,
+                                      reinterpret_cast<void**>(&factory));
         if (SUCCEEDED(hr)) hr = factory->CreateBitmapFromHBITMAP(bitmap, nullptr, WICBitmapIgnoreAlpha, &source);
         if (SUCCEEDED(hr)) hr = factory->CreateStream(&stream);
         if (SUCCEEDED(hr)) hr = stream->InitializeFromFilename(path.c_str(), GENERIC_WRITE);
@@ -63,20 +83,26 @@ struct Surface {
         if (SUCCEEDED(hr)) hr = frame->WriteSource(source, nullptr);
         if (SUCCEEDED(hr)) hr = frame->Commit();
         if (SUCCEEDED(hr)) hr = encoder->Commit();
-        if (frame) frame->Release(); if (encoder) encoder->Release(); if (stream) stream->Release();
-        if (source) source->Release(); if (factory) factory->Release();
+        if (frame) frame->Release();
+        if (encoder) encoder->Release();
+        if (stream) stream->Release();
+        if (source) source->Release();
+        if (factory) factory->Release();
         assert(SUCCEEDED(hr));
     }
 };
 
 HitTarget FindDay(const ViewState& state, const std::string& day) {
-    for (const auto& hit : state.hits) if (hit.command == CmdSelectDay && hit.value == day) return hit;
-    assert(false && "date hit target absent"); return {};
+    for (const auto& hit : state.hits)
+        if (hit.command == CmdSelectDay && hit.value == day) return hit;
+    assert(false && "date hit target absent");
+    return {};
 }
 
 std::map<std::string, RECT> DayTargets(const ViewState& state) {
     std::map<std::string, RECT> result;
-    for (const auto& hit : state.hits) if (hit.command == CmdSelectDay) result.emplace(hit.value, hit.rect);
+    for (const auto& hit : state.hits)
+        if (hit.command == CmdSelectDay) result.emplace(hit.value, hit.rect);
     return result;
 }
 
@@ -118,28 +144,38 @@ void TestRangesAndCurrency() {
     state.snapshot.rows = {Row(today, "Codex", 70, 30), Row(yesterday, "Claude Code", 90, 10),
                            Row(ShiftDay(today, -7), "Codex", 20, 10), Row(today, "Unused", 0, 0)};
     assert(SelectRows(state).size() == 1);
-    state.prefs.range = Range::Week; assert(SelectRows(state).size() == 2);
-    state.prefs.range = Range::All; assert(SelectRows(state).size() == 3);
-    state.selectedDay = yesterday; assert(SelectRows(state).size() == 1 && SelectRows(state)[0].software == "Claude Code");
-    state.selectedDay = ShiftDay(today, -2); assert(SelectRows(state).empty());
+    state.prefs.range = Range::Week;
+    assert(SelectRows(state).size() == 2);
+    state.prefs.range = Range::All;
+    assert(SelectRows(state).size() == 3);
+    state.selectedDay = yesterday;
+    assert(SelectRows(state).size() == 1 && SelectRows(state)[0].software == "Claude Code");
+    state.selectedDay = ShiftDay(today, -2);
+    assert(SelectRows(state).empty());
     assert(FormatCost(std::nullopt, state.prefs) == L"费用未知");
     assert(FormatCost(0, state.prefs) == L"$0.00");
     assert(FormatCost(1250000, state.prefs) == L"$1.25");
     const auto before = state.snapshot.rows;
     for (int index = 0; index < 10; ++index) {
-        state.prefs.cny = true; state.prefs.usdToCny = 0;
+        state.prefs.cny = true;
+        state.prefs.usdToCny = 0;
         assert(FormatCost(1250000, state.prefs) == L"汇率暂不可用");
-        state.prefs.usdToCny = 7.2; assert(FormatCost(1250000, state.prefs) == L"¥9.00");
-        state.prefs.cny = false; assert(FormatCost(1250000, state.prefs) == L"$1.25");
+        state.prefs.usdToCny = 7.2;
+        assert(FormatCost(1250000, state.prefs) == L"¥9.00");
+        state.prefs.cny = false;
+        assert(FormatCost(1250000, state.prefs) == L"$1.25");
     }
-    state.prefs.cny = true; state.prefs.usdToCny = 0; state.prefs.automaticUsdToCny = 7.2;
+    state.prefs.cny = true;
+    state.prefs.usdToCny = 0;
+    state.prefs.automaticUsdToCny = 7.2;
     assert(FormatCost(1250000, state.prefs) == L"¥9.00");
     state.prefs.usdToCny = 8.0;
     assert(FormatCost(1250000, state.prefs) == L"¥10.00"); // Explicit manual rate wins.
     state.prefs.usdToCny = 0;
     assert(FormatCost(1250000, state.prefs) == L"¥9.00"); // Clearing manual resumes the public rate.
     state.prefs.usdToCny = std::numeric_limits<double>::infinity();
-    assert(FormatCost(1250000, state.prefs) == L"¥9.00"); // Invalid persisted manual values cannot defeat a valid public rate.
+    assert(FormatCost(1250000, state.prefs) ==
+           L"¥9.00"); // Invalid persisted manual values cannot defeat a valid public rate.
     state.prefs.usdToCny = 10000;
     assert(FormatCost(1250000, state.prefs) == L"¥9.00");
     state.prefs.usdToCny = 0;
@@ -156,26 +192,38 @@ void TestRangesAndCurrency() {
     }
     assert(FormatCount(1234567) == L"1,234,567");
     assert(FormatCount(-1234567) == L"-1,234,567");
-    state.selectedDay = yesterday; state.prefs.range = Range::All;
+    state.selectedDay = yesterday;
+    state.prefs.range = Range::All;
     assert(TraySummary(state).find(L"今日 100 Token") != std::wstring::npos);
 }
 
-void TestBeijingUpdateTimes() {
+void TestLocalUpdateTimes() {
     ViewState state;
-    const std::pair<const char*, const wchar_t*> cases[] = {
-        {"2026-10-09T02:50:16Z", L"2026-10-09 10:50:16 · 北京时间"},
-        {"2026-10-09T18:50:16Z", L"2026-10-10 02:50:16 · 北京时间"},
-        {"2026-12-31T20:00:00Z", L"2027-01-01 04:00:00 · 北京时间"},
-        {"2024-02-28T18:00:00.123Z", L"2024-02-29 02:00:00 · 北京时间"},
-        {"2026-10-09T03:00:00+09:00", L"2026-10-09 02:00:00 · 北京时间"}
+    struct Case {
+        const char* timestamp;
+        int offset;
+        const wchar_t* expected;
     };
+    // Explicit offsets keep these independent of the machine running the tests.
+    const Case cases[] = {{"2026-10-09T02:50:16Z", 480, L"2026-10-09 10:50:16 · UTC+08:00"},
+                          {"2026-10-09T18:50:16Z", 480, L"2026-10-10 02:50:16 · UTC+08:00"},
+                          {"2026-12-31T20:00:00Z", 480, L"2027-01-01 04:00:00 · UTC+08:00"},
+                          {"2024-02-28T18:00:00.123Z", 480, L"2024-02-29 02:00:00 · UTC+08:00"},
+                          {"2026-10-09T03:00:00+09:00", 480, L"2026-10-09 02:00:00 · UTC+08:00"},
+                          {"2026-01-01T03:00:00Z", -300, L"2025-12-31 22:00:00 · UTC-05:00"},
+                          {"2026-10-09T00:00:00Z", 345, L"2026-10-09 05:45:00 · UTC+05:45"}};
     for (const auto& item : cases) {
-        state.snapshot.updatedAt = item.first;
+        assert(FormatUpdateTime(item.timestamp, false, item.offset) == std::wstring(L"更新于 ") + item.expected);
+        // The tray uses the system zone, which must be the same zone usage days are bucketed in.
+        state.snapshot.updatedAt = item.timestamp;
         const auto summary = TraySummary(state);
-        assert(summary.find(item.second) != std::wstring::npos);
-        assert(summary.find(Utf8ToWide(item.first)) == std::wstring::npos);
+        assert(summary.find(FormatUpdateTime(item.timestamp, false, LocalUtcOffsetMinutes(item.timestamp))) !=
+               std::wstring::npos);
+        assert(summary.find(Utf8ToWide(item.timestamp)) == std::wstring::npos);
     }
-    for (const auto& invalid : {"not-a-date", "2026-02-30T02:50:16Z", "2026-10-09T24:00:00Z", "2026-10-09T02:50:16", "2026-10-09T02:50:16.Z", "9999-12-31T23:59:59Z"}) {
+    assert(FormatUpdateTime("2026-10-09T02:50:16Z", true, 480) == L"更新于 2026年10月9日 10:50:16 · UTC+08:00");
+    for (const auto& invalid : {"not-a-date", "2026-02-30T02:50:16Z", "2026-10-09T24:00:00Z", "2026-10-09T02:50:16",
+                                "2026-10-09T02:50:16.Z", "9999-12-31T23:59:59Z"}) {
         state.snapshot.updatedAt = invalid;
         const auto summary = TraySummary(state);
         assert(summary.find(L"更新时间未知") != std::wstring::npos);
@@ -187,13 +235,17 @@ void TestBeijingUpdateTimes() {
 
 void TestAutomaticCurrencyChart(const std::filesystem::path& output) {
     ViewState state;
-    state.prefs.cny = true; state.prefs.usdToCny = 0; state.prefs.automaticUsdToCny = 7.2;
-    state.prefs.exchangeRateDate = "2026-10-09"; state.prefs.exchangeRateSource = "Frankfurter / ECB";
+    state.prefs.cny = true;
+    state.prefs.usdToCny = 0;
+    state.prefs.automaticUsdToCny = 7.2;
+    state.prefs.exchangeRateDate = "2026-10-09";
+    state.prefs.exchangeRateSource = "Frankfurter / ECB";
     state.snapshot.updatedAt = "2026-10-09T02:50:16Z";
     state.costMetric = true;
     const auto today = LocalToday(), yesterday = ShiftDay(today, -1);
     state.snapshot.rows = {Row(today, "Codex", 100, 50), Row(yesterday, "Claude Code", 100, 50)};
-    state.snapshot.rows[0].costUsdMicros = 1000000; state.snapshot.rows[1].costUsdMicros = 2000000;
+    state.snapshot.rows[0].costUsdMicros = 1000000;
+    state.snapshot.rows[1].costUsdMicros = 2000000;
     Surface surface(800, 700);
     PaintView(nullptr, surface.dc, surface.rect, state);
     const auto targets = DayTargets(state);
@@ -207,7 +259,8 @@ void TestAutomaticCurrencyChart(const std::filesystem::path& output) {
     AssertSameCalendarTargets(targets, state);
     assert(GetPixel(surface.dc, pixelX, pixelY) == state.prefs.trendColor);
     assert(FormatCost(1000000, state.prefs) == L"¥8.00");
-    state.prefs.usdToCny = 0; state.prefs.automaticUsdToCny = 0;
+    state.prefs.usdToCny = 0;
+    state.prefs.automaticUsdToCny = 0;
     PaintView(nullptr, surface.dc, surface.rect, state);
     AssertSameCalendarTargets(targets, state);
     assert(GetPixel(surface.dc, pixelX, pixelY) != state.prefs.trendColor);
@@ -216,15 +269,20 @@ void TestAutomaticCurrencyChart(const std::filesystem::path& output) {
     PaintView(nullptr, surface.dc, surface.rect, state);
     assert(GetPixel(surface.dc, pixelX, pixelY) == state.prefs.trendColor);
     assert(FormatCost(1000000, state.prefs) == L"$1.00");
-    state.page = Page::Settings; state.prefs.automaticUsdToCny = 7.2;
+    state.page = Page::Settings;
+    state.prefs.automaticUsdToCny = 7.2;
     PaintView(nullptr, surface.dc, surface.rect, state);
-    assert(std::any_of(state.hits.begin(), state.hits.end(), [](const HitTarget& target) { return target.command == CmdExchangeRate; }));
+    assert(std::any_of(state.hits.begin(), state.hits.end(),
+                       [](const HitTarget& target) { return target.command == CmdExchangeRate; }));
     surface.Save(output / L"ui-settings-auto-rate.png");
-    state.prefs.usdToCny = 8.0; state.prefs.exchangeRateStatus = "更新失败，沿用最近公布汇率；当前手动设置优先。";
+    state.prefs.usdToCny = 8.0;
+    state.prefs.exchangeRateStatus = "更新失败，沿用最近公布汇率；当前手动设置优先。";
     PaintView(nullptr, surface.dc, surface.rect, state);
     surface.Save(output / L"ui-settings-manual-rate.png");
-    state.prefs.usdToCny = 0; state.prefs.automaticUsdToCny = 0;
-    state.prefs.exchangeRateDate.clear(); state.prefs.exchangeRateSource.clear();
+    state.prefs.usdToCny = 0;
+    state.prefs.automaticUsdToCny = 0;
+    state.prefs.exchangeRateDate.clear();
+    state.prefs.exchangeRateSource.clear();
     state.prefs.exchangeRateStatus = "获取失败；离线暂无有效缓存，人民币费用保持未知。";
     PaintView(nullptr, surface.dc, surface.rect, state);
     surface.Save(output / L"ui-settings-no-rate.png");
@@ -235,14 +293,15 @@ void TestPaint(const std::filesystem::path& output) {
     state.prefs.range = Range::All;
     const auto today = LocalToday(), zero = ShiftDay(today, -1), missing = ShiftDay(today, -2);
     state.snapshot.rows = {Row(today, "Codex", 120000, 40000, "openai", "test-model-a"),
-                          Row(today, "Claude Code", 90000, 22000, "anthropic", "test-model-b"),
-                          Row(zero, "Codex", 0, 0, "openai", "test-model-a")};
+                           Row(today, "Claude Code", 90000, 22000, "anthropic", "test-model-b"),
+                           Row(zero, "Codex", 0, 0, "openai", "test-model-a")};
     state.snapshot.rows[2].costUsdMicros = 0;
     Surface surface;
     PaintView(nullptr, surface.dc, surface.rect, state);
     auto zeroHit = FindDay(state, zero), missingHit = FindDay(state, missing);
     COLORREF zeroColor = GetPixel(surface.dc, (zeroHit.rect.left + zeroHit.rect.right) / 2, zeroHit.rect.bottom - 29);
-    COLORREF missingColor = GetPixel(surface.dc, (missingHit.rect.left + missingHit.rect.right) / 2, missingHit.rect.bottom - 29);
+    COLORREF missingColor =
+        GetPixel(surface.dc, (missingHit.rect.left + missingHit.rect.right) / 2, missingHit.rect.bottom - 29);
     assert(zeroColor == state.prefs.trendColor && zeroColor != missingColor);
     surface.Save(output / L"ui-overview.png");
     const auto weekTargets = DayTargets(state);
@@ -255,7 +314,8 @@ void TestPaint(const std::filesystem::path& output) {
     PaintView(nullptr, surface.dc, surface.rect, state);
     AssertSameCalendarTargets(weekTargets, state);
     assert(state.chartEnd == navigationEnd);
-    state.trendMonth = true; state.chartEnd = ShiftDay(today, -35);
+    state.trendMonth = true;
+    state.chartEnd = ShiftDay(today, -35);
     state.selectedDay.clear();
     PaintView(nullptr, surface.dc, surface.rect, state);
     const auto monthTargets = DayTargets(state);
@@ -264,12 +324,17 @@ void TestPaint(const std::filesystem::path& output) {
     PaintView(nullptr, surface.dc, surface.rect, state);
     AssertSameCalendarTargets(monthTargets, state);
     assert(state.chartEnd == monthEnd);
-    state.trendMonth = false; state.selectedDay.clear(); state.chartEnd.clear();
+    state.trendMonth = false;
+    state.selectedDay.clear();
+    state.chartEnd.clear();
     state.chart = Chart::Heatmap;
     PaintView(nullptr, surface.dc, surface.rect, state);
-    zeroHit = FindDay(state, zero); missingHit = FindDay(state, missing);
-    zeroColor = GetPixel(surface.dc, (zeroHit.rect.left + zeroHit.rect.right) / 2, (zeroHit.rect.top + zeroHit.rect.bottom) / 2);
-    missingColor = GetPixel(surface.dc, (missingHit.rect.left + missingHit.rect.right) / 2, (missingHit.rect.top + missingHit.rect.bottom) / 2);
+    zeroHit = FindDay(state, zero);
+    missingHit = FindDay(state, missing);
+    zeroColor = GetPixel(surface.dc, (zeroHit.rect.left + zeroHit.rect.right) / 2,
+                         (zeroHit.rect.top + zeroHit.rect.bottom) / 2);
+    missingColor = GetPixel(surface.dc, (missingHit.rect.left + missingHit.rect.right) / 2,
+                            (missingHit.rect.top + missingHit.rect.bottom) / 2);
     assert(zeroColor == RGB(232, 236, 242));
     assert(missingColor == RGB(245, 247, 250));
     const auto calendarTargets = DayTargets(state);
@@ -294,23 +359,31 @@ void TestPaint(const std::filesystem::path& output) {
     state.chart = Chart::Heatmap;
     PaintView(nullptr, surface.dc, surface.rect, state);
     AssertSameCalendarTargets(calendarTargets, state);
-    state.selectedDay.clear(); state.chartEnd = today;
+    state.selectedDay.clear();
+    state.chartEnd = today;
     PaintView(nullptr, surface.dc, surface.rect, state);
     AssertSameCalendarTargets(calendarTargets, state);
-    state.selectedDay.clear(); state.page = Page::Settings;
+    state.selectedDay.clear();
+    state.page = Page::Settings;
     state.snapshot.sources = {Source("codex", "Codex", "ready"), Source("claude", "Claude Code", "not-found")};
     state.snapshot.sources[0].records = state.snapshot.sources[0].files = 1;
     state.snapshot.sources[0].detail = "Test fixture";
     state.snapshot.sources[1].detail = "No records in test fixture";
-    state.snapshot.pricingStatus = "已加载 LiteLLM / models.dev / OpenRouter 参考价目；未匹配模型保持未定价，历史费率已固定。";
+    state.snapshot.pricingStatus =
+        "已加载 LiteLLM / models.dev / OpenRouter 参考价目；未匹配模型保持未定价，历史费率已固定。";
+    // Appearance, language and budget rows add this much above the pricing card.
+    constexpr int kPreferenceRows = 284;
+    state.scroll = kPreferenceRows;
     PaintView(nullptr, surface.dc, surface.rect, state);
     assert(state.contentHeight > surface.rect.bottom);
     surface.Save(output / L"ui-settings.png");
     const int twoSourceHeight = state.contentHeight;
-    assert(std::any_of(state.hits.begin(), state.hits.end(), [](const HitTarget& hit) { return hit.command == CmdOnlineCheck; }));
-    state.scroll = 300;
+    assert(std::any_of(state.hits.begin(), state.hits.end(),
+                       [](const HitTarget& hit) { return hit.command == CmdOnlineCheck; }));
+    state.scroll = 300 + kPreferenceRows;
     PaintView(nullptr, surface.dc, surface.rect, state);
-    assert(std::any_of(state.hits.begin(), state.hits.end(), [](const HitTarget& hit) { return hit.command == CmdImportSource; }));
+    assert(std::any_of(state.hits.begin(), state.hits.end(),
+                       [](const HitTarget& hit) { return hit.command == CmdImportSource; }));
     surface.Save(output / L"ui-settings-sources.png");
     state.snapshot.sources.pop_back();
     PaintView(nullptr, surface.dc, surface.rect, state);
@@ -320,16 +393,24 @@ void TestPaint(const std::filesystem::path& output) {
     state.snapshot.sources.push_back(Source("future-agent", "Future Agent", "needs-export"));
     PaintView(nullptr, surface.dc, surface.rect, state);
     assert(state.contentHeight == twoSourceHeight);
-    state.page = Page::Models; state.selectedDay.clear(); state.scroll = 0;
+    state.page = Page::Models;
+    state.selectedDay.clear();
+    state.scroll = 0;
     state.snapshot.rows = {Row(today, "Codex", 1, 1, "", "same-id"), Row(today, "Claude Code", 1, 1, "", "same-id")};
     Surface small(1200, 300);
-    PaintView(nullptr, small.dc, small.rect, state); const auto separateHeight = state.contentHeight;
-    state.snapshot.rows[0].provider = "verified-provider"; state.snapshot.rows[1].provider = "verified-provider";
-    PaintView(nullptr, small.dc, small.rect, state); assert(separateHeight > state.contentHeight + 50);
-    state.dpi = 1.5f; state.page = Page::Overview; state.chart = Chart::Trend;
+    PaintView(nullptr, small.dc, small.rect, state);
+    const auto separateHeight = state.contentHeight;
+    state.snapshot.rows[0].provider = "verified-provider";
+    state.snapshot.rows[1].provider = "verified-provider";
+    PaintView(nullptr, small.dc, small.rect, state);
+    assert(separateHeight > state.contentHeight + 50);
+    state.dpi = 1.5f;
+    state.page = Page::Overview;
+    state.chart = Chart::Trend;
     Surface highDpi(1800, 1230);
     PaintView(nullptr, highDpi.dc, highDpi.rect, state);
-    auto dayHit = FindDay(state, today); assert(dayHit.rect.right > 1700);
+    auto dayHit = FindDay(state, today);
+    assert(dayHit.rect.right > 1700);
     highDpi.Save(output / L"ui-high-dpi.png");
 }
 
@@ -337,9 +418,14 @@ void TestTokenBuckets(const std::filesystem::path& output) {
     ViewState state;
     state.page = Page::Software;
     auto row = Row(LocalToday(), "Codex", 100, 50, "openai", "bucket-fixture");
-    row.cachedInput = 40; row.cacheWrite = 20; row.cacheWrite1h = 10;
-    row.reasoning = 10; row.unclassified = 50;
-    row.costUsdMicros = 123000; row.automaticRequests = 1; row.priceSources = "OpenRouter 首方参考";
+    row.cachedInput = 40;
+    row.cacheWrite = 20;
+    row.cacheWrite1h = 10;
+    row.reasoning = 10;
+    row.unclassified = 50;
+    row.costUsdMicros = 123000;
+    row.automaticRequests = 1;
+    row.priceSources = "OpenRouter 首方参考";
     state.snapshot.rows = {row};
     Surface surface(1200, 700);
     PaintView(nullptr, surface.dc, surface.rect, state);
@@ -360,47 +446,58 @@ void TestTokenBuckets(const std::filesystem::path& output) {
     state.snapshot.rows[0].cachedInput = state.snapshot.rows[0].cacheWrite = 0;
     state.snapshot.rows[0].cacheWrite1h = state.snapshot.rows[0].reasoning = 0;
     state.snapshot.rows[0].unclassified = 200;
-    state.snapshot.rows[0].costUsdMicros.reset(); state.snapshot.rows[0].unpricedRequests = 1;
-    state.snapshot.rows[0].automaticRequests = 0; state.snapshot.rows[0].priceSources.clear();
+    state.snapshot.rows[0].costUsdMicros.reset();
+    state.snapshot.rows[0].unpricedRequests = 1;
+    state.snapshot.rows[0].automaticRequests = 0;
+    state.snapshot.rows[0].priceSources.clear();
     PaintView(nullptr, surface.dc, surface.rect, state);
     assert(GetPixel(surface.dc, left + 50, barY) == RGB(103, 116, 139));
     assert(GetPixel(surface.dc, left + 850, barY) == RGB(103, 116, 139));
-    assert(!state.snapshot.rows[0].costUsdMicros && state.snapshot.rows[0].input == 0 && state.snapshot.rows[0].output == 0);
+    assert(!state.snapshot.rows[0].costUsdMicros && state.snapshot.rows[0].input == 0 &&
+           state.snapshot.rows[0].output == 0);
     surface.Save(output / L"ui-total-only.png");
 }
 
 void TestBrandResources() {
     IWICImagingFactory* factory = nullptr;
-    assert(SUCCEEDED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER,
-        IID_IWICImagingFactory, reinterpret_cast<void**>(&factory))));
+    assert(SUCCEEDED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory,
+                                      reinterpret_cast<void**>(&factory))));
     for (int id = 201; id <= 238; ++id) {
         const HRSRC resource = FindResourceW(GetModuleHandleW(nullptr), MAKEINTRESOURCEW(id), RT_RCDATA);
         assert(resource);
         const HGLOBAL loaded = LoadResource(GetModuleHandleW(nullptr), resource);
         auto* data = static_cast<BYTE*>(LockResource(loaded));
         const DWORD size = SizeofResource(GetModuleHandleW(nullptr), resource);
-        IWICStream* stream = nullptr; IWICBitmapDecoder* decoder = nullptr; IWICBitmapFrameDecode* frame = nullptr;
+        IWICStream* stream = nullptr;
+        IWICBitmapDecoder* decoder = nullptr;
+        IWICBitmapFrameDecode* frame = nullptr;
         assert(SUCCEEDED(factory->CreateStream(&stream)));
         assert(SUCCEEDED(stream->InitializeFromMemory(data, size)));
         assert(SUCCEEDED(factory->CreateDecoderFromStream(stream, nullptr, WICDecodeMetadataCacheOnLoad, &decoder)));
         assert(SUCCEEDED(decoder->GetFrame(0, &frame)));
         UINT width = 0, height = 0;
         assert(SUCCEEDED(frame->GetSize(&width, &height)) && width == 64 && height == 64);
-        frame->Release(); decoder->Release(); stream->Release();
+        frame->Release();
+        decoder->Release();
+        stream->Release();
     }
     factory->Release();
 }
 
 void TestSourcePathCards(const std::filesystem::path& output) {
     ViewState state;
-    state.page = Page::Settings; state.scroll = 900;
+    state.page = Page::Settings;
+    state.scroll = 900 + 284; // Skips the display, budget, pricing and data cards.
     auto local = Source("codex", "Codex", "ready");
     local.paths = {{L"C:\\Users\\使用者\\.codex\\sessions", true}, {L"E:\\用量归档\\Codex\\archived_sessions", false}};
-    local.detail = "本地实际用量记录"; local.customPath = true;
-    local.files = 2; local.records = 8;
+    local.detail = "本地实际用量记录";
+    local.customPath = true;
+    local.files = 2;
+    local.records = 8;
     auto cursor = Source("cursor", "Cursor", "pending");
     cursor.paths = {{L"C:\\Users\\使用者\\AppData\\Local\\TokenScope\\.cache\\cursor\\usage.json", false}};
-    cursor.canAuthorize = true; cursor.connectionState = "unconfigured";
+    cursor.canAuthorize = true;
+    cursor.connectionState = "unconfigured";
     cursor.connectionDetail = L"使用官方账户的只读用量接口，真实同步后写入本地缓存。";
     auto cloud = Source("coze", "Coze", "needs-export");
     cloud.paths = {{L"E:\\真实导出\\Coze\\usage.jsonl", false}};
@@ -409,7 +506,8 @@ void TestSourcePathCards(const std::filesystem::path& output) {
     state.snapshot.sources = {local, cursor, cloud};
     Surface surface(1200, 1200);
     auto count = [&](int command, const std::string& id) {
-        return std::count_if(state.hits.begin(), state.hits.end(), [&](const HitTarget& target) { return target.command == command && target.value == id; });
+        return std::count_if(state.hits.begin(), state.hits.end(),
+                             [&](const HitTarget& target) { return target.command == command && target.value == id; });
     };
     PaintView(nullptr, surface.dc, surface.rect, state);
     assert(count(CmdSourcePath, "codex") == 3); // Two candidate rows and the explicit change action.
@@ -421,7 +519,8 @@ void TestSourcePathCards(const std::filesystem::path& output) {
     assert(count(CmdSourcePath, "coze") == 2 && count(CmdSourceReset, "coze") == 1);
     surface.Save(output / L"ui-source-paths.png");
     const int beforeExtraPath = state.contentHeight;
-    state.snapshot.sources[0].paths.push_back({L"E:\\非常长的目录名称\\" + std::wstring(120, L'长') + L"\\session-2026-10-09.jsonl", true});
+    state.snapshot.sources[0].paths.push_back(
+        {L"E:\\非常长的目录名称\\" + std::wstring(120, L'长') + L"\\session-2026-10-09.jsonl", true});
     PaintView(nullptr, surface.dc, surface.rect, state);
     assert(state.contentHeight == beforeExtraPath + 26);
     assert(count(CmdSourcePath, "codex") == 4);
@@ -438,27 +537,40 @@ void TestSourcePathCards(const std::filesystem::path& output) {
     state.snapshot.sources[1].connectionDetail = L"授权过期，请重新授权；可解除本地保存的凭据。";
     Surface narrow(800, 1200);
     PaintView(nullptr, narrow.dc, narrow.rect, state);
-    assert(count(CmdSourceConnect, "cursor") == 1 && count(CmdSourceSync, "cursor") == 1 && count(CmdSourceDisconnect, "cursor") == 1);
-    for (const auto& target : state.hits) if (target.command >= CmdSourcePath && target.command <= CmdSourceHelp)
-        assert(target.rect.left >= 174 && target.rect.right <= narrow.rect.right - 18);
+    assert(count(CmdSourceConnect, "cursor") == 1 && count(CmdSourceSync, "cursor") == 1 &&
+           count(CmdSourceDisconnect, "cursor") == 1);
+    for (const auto& target : state.hits)
+        if (target.command >= CmdSourcePath && target.command <= CmdSourceHelp)
+            assert(target.rect.left >= 174 && target.rect.right <= narrow.rect.right - 18);
     narrow.Save(output / L"ui-source-paths-narrow.png");
     // Missing or future sources remain configuration-only and cannot create a
     // zero-token software row merely by gaining a local path or connection.
-    state.page = Page::Software; state.scroll = 0;
+    state.page = Page::Software;
+    state.scroll = 0;
     assert(SelectRows(state).empty());
 }
 
 bool RenderRealDatabase(const std::filesystem::path& database, const std::filesystem::path& output) {
     if (!std::filesystem::is_regular_file(database)) {
-        std::fputs("Real database does not exist.\n", stderr); return false;
+        std::fputs("Real database does not exist.\n", stderr);
+        return false;
     }
     Store store;
     std::string error;
-    if (!store.Open(database.wstring(), error)) { std::fprintf(stderr, "Database open failed: %s\n", error.c_str()); return false; }
+    if (!store.Open(database.wstring(), error)) {
+        std::fprintf(stderr, "Database open failed: %s\n", error.c_str());
+        return false;
+    }
     ViewState state;
     state.snapshot = store.ReadSnapshot();
-    if (!state.snapshot.error.empty()) { std::fprintf(stderr, "Read failed: %s\n", state.snapshot.error.c_str()); return false; }
-    if (state.snapshot.rows.empty()) { std::fputs("Real database has no usage rows; no fixture will be substituted.\n", stderr); return false; }
+    if (!state.snapshot.error.empty()) {
+        std::fprintf(stderr, "Read failed: %s\n", state.snapshot.error.c_str());
+        return false;
+    }
+    if (state.snapshot.rows.empty()) {
+        std::fputs("Real database has no usage rows; no fixture will be substituted.\n", stderr);
+        return false;
+    }
     state.prefs.range = Range::All;
     state.chartEnd = LocalToday();
     state.notice = L"本机真实采集记录 · " + FormatCount(state.snapshot.events) + L" 条用量记录";
@@ -479,27 +591,110 @@ bool RenderRealDatabase(const std::filesystem::path& database, const std::filesy
     state.page = Page::Models;
     PaintView(nullptr, full.dc, full.rect, state);
     full.Save(output / L"real-models.png");
-    std::printf("Real database rendered: %llu day/software/model rows; %lld collected usage records. No synthetic fixtures executed.\n",
+    std::printf(
+        "Real database rendered: %llu day/software/model rows; %lld collected usage records. No synthetic fixtures executed.\n",
         static_cast<unsigned long long>(state.snapshot.rows.size()), static_cast<long long>(state.snapshot.events));
     return true;
 }
 
 } // namespace
 
+void TestEnglishDarkAndBudget(const std::filesystem::path& output) {
+    ViewState state;
+    const auto today = LocalToday();
+    auto priced = Row(today, "Codex", 1000, 200, "openai", "gpt-test");
+    priced.costUsdMicros = 2500000;
+    state.snapshot.rows = {priced};
+    state.snapshot.updatedAt = "2026-10-09T02:50:16Z";
+    state.snapshot.sources = {Source("codex", "Codex", "ready")};
+    // Budgets compare estimated spending in the budget currency.
+    state.prefs.dailyBudget = 2;
+    state.prefs.monthlyBudget = 10;
+    auto budget = ComputeBudget(state.snapshot, state.prefs);
+    assert(budget.available && std::abs(budget.today - 2.5) < 1e-9 && std::abs(budget.month - 2.5) < 1e-9);
+    assert(!budget.todayHasUnknown);
+    state.prefs.budgetCny = true;
+    assert(!ComputeBudget(state.snapshot, state.prefs).available); // No rate, no CNY budget.
+    state.prefs.usdToCny = 7;
+    budget = ComputeBudget(state.snapshot, state.prefs);
+    assert(budget.available && std::abs(budget.today - 17.5) < 1e-9);
+    state.prefs.budgetCny = false;
+    state.prefs.usdToCny = 0;
+    auto unpriced = Row(today, "Codex", 10, 1, "openai", "unknown-model");
+    unpriced.unpricedRequests = 1;
+    state.snapshot.rows.push_back(unpriced);
+    assert(ComputeBudget(state.snapshot, state.prefs).todayHasUnknown);
+    state.snapshot.rows.pop_back();
+
+    // English interface text, including composed messages and translated patterns.
+    SetLanguage(Language::English);
+    assert(TranslationCount() > 400 && HasTranslation(L"刷新"));
+    assert(std::wstring(Tr(L"刷新")) == L"Refresh");
+    assert(Tr(std::wstring(L"未翻译的键")) == L"未翻译的键"); // Unknown keys fall back to Chinese.
+    assert(TrF(L"今日 {0} / {1}", L"$1.00", L"$2.00") == L"Today $1.00 / $2.00");
+    assert(std::string(Tr8("数据库未打开。")) == "The database is not open.");
+    assert(TraySummary(state).find(L"Today 1,200 tokens\nEstimated $2.50") != std::wstring::npos);
+    assert(FormatUpdateTime("2026-10-09T02:50:16Z", true, 480) == L"Updated 2026-10-09 10:50:16 · UTC+08:00");
+    // Dark palette in English on every page; images are kept for visual review.
+    state.prefs.darkMode = true;
+    Surface surface;
+    const std::pair<Page, const wchar_t*> pages[] = {{Page::Overview, L"ui-en-dark-overview.png"},
+                                                     {Page::Software, L"ui-en-dark-software.png"},
+                                                     {Page::Models, L"ui-en-dark-models.png"},
+                                                     {Page::Settings, L"ui-en-dark-settings.png"}};
+    for (const auto& [page, name] : pages) {
+        state.page = page;
+        PaintView(nullptr, surface.dc, surface.rect, state);
+        assert(!state.hits.empty());
+        surface.Save(output / name);
+    }
+    state.chart = Chart::Heatmap;
+    state.page = Page::Overview;
+    PaintView(nullptr, surface.dc, surface.rect, state);
+    surface.Save(output / L"ui-en-dark-heatmap.png");
+    state.page = Page::Settings;
+    state.prefs.darkMode = false;
+    PaintView(nullptr, surface.dc, surface.rect, state);
+    assert(std::any_of(state.hits.begin(), state.hits.end(),
+                       [](const HitTarget& hit) { return hit.command == CmdBudget; }));
+    assert(std::any_of(state.hits.begin(), state.hits.end(),
+                       [](const HitTarget& hit) { return hit.command == CmdTheme; }));
+    assert(std::any_of(state.hits.begin(), state.hits.end(),
+                       [](const HitTarget& hit) { return hit.command == CmdLanguage; }));
+    surface.Save(output / L"ui-en-light-settings.png");
+    SetLanguage(Language::Chinese);
+    assert(std::wstring(Tr(L"刷新")) == L"刷新");
+}
+
 int main(int argc, char** argv) {
     HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
     assert(SUCCEEDED(hr));
     if (argc >= 2 && std::string(argv[1]) == "--real-db") {
-        if (argc < 3) { std::fputs("Usage: view_tests.exe --real-db <path> [output-directory]\n", stderr); CoUninitialize(); return 2; }
-        const std::filesystem::path output = argc > 3 ? std::filesystem::path(argv[3]) : std::filesystem::path("build/real-view-output");
+        if (argc < 3) {
+            std::fputs("Usage: view_tests.exe --real-db <path> [output-directory]\n", stderr);
+            CoUninitialize();
+            return 2;
+        }
+        const std::filesystem::path output =
+            argc > 3 ? std::filesystem::path(argv[3]) : std::filesystem::path("build/real-view-output");
         const bool rendered = RenderRealDatabase(std::filesystem::path(argv[2]), output);
-        CoUninitialize(); return rendered ? 0 : 1;
+        CoUninitialize();
+        return rendered ? 0 : 1;
     }
-    std::filesystem::path output = argc > 1 ? std::filesystem::path(argv[1]) : std::filesystem::path("build/view-test-output");
+    std::filesystem::path output =
+        argc > 1 ? std::filesystem::path(argv[1]) : std::filesystem::path("build/view-test-output");
     std::filesystem::create_directories(output);
-    TestCalendarRollover(); TestRangesAndCurrency(); TestBeijingUpdateTimes(); TestAutomaticCurrencyChart(output);
-    TestPaint(output); TestTokenBuckets(output); TestBrandResources(); TestSourcePathCards(output);
+    TestCalendarRollover();
+    TestRangesAndCurrency();
+    TestLocalUpdateTimes();
+    TestAutomaticCurrencyChart(output);
+    TestPaint(output);
+    TestTokenBuckets(output);
+    TestBrandResources();
+    TestSourcePathCards(output);
+    TestEnglishDarkAndBudget(output);
     CoUninitialize();
-    std::puts("View tests passed: source paths/dynamic cards/auth states/instructions/narrow actions, Beijing timestamps, automatic/manual FX, fixed charts, ranges, disjoint tokens, pricing settings, tray hover, zero vs missing, model identity, DPI, resources, and offscreen rendering.");
+    std::puts(
+        "View tests passed: source paths/dynamic cards/auth states/instructions/narrow actions, local-zone timestamps, automatic/manual FX, fixed charts, ranges, disjoint tokens, pricing settings, tray hover, zero vs missing, model identity, DPI, resources, English/dark rendering, budgets, and offscreen rendering.");
     return 0;
 }

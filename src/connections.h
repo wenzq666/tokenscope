@@ -31,11 +31,11 @@ struct ConnectionHttpRequest {
 };
 struct ConnectionHttpResponse {
     unsigned status = 0;
-    std::string body; // Untrusted. Never expose the body in diagnostics.
+    std::string body;          // Untrusted. Never expose the body in diagnostics.
     unsigned networkError = 0; // Windows error code, never server-provided text.
 };
-using ConnectionTransport = std::function<ConnectionHttpResponse(
-    const ConnectionHttpRequest&, const std::atomic_bool& cancelled)>;
+using ConnectionTransport =
+    std::function<ConnectionHttpResponse(const ConnectionHttpRequest&, const std::atomic_bool& cancelled)>;
 
 struct ConnectionSyncOptions {
     // Zero end means now; zero start means end minus 30 days. Max window is 30 days.
@@ -51,19 +51,18 @@ struct ConnectionSyncResult {
 };
 
 // Pure request planning, suitable for a fixture transport. Dates are epoch milliseconds.
-std::optional<ConnectionHttpRequest> BuildConnectionRequest(
-    const std::string& sourceId, const std::string& token,
-    int64_t startMilliseconds, int64_t endMilliseconds, size_t page, std::string& error);
+std::optional<ConnectionHttpRequest> BuildConnectionRequest(const std::string& sourceId, const std::string& token,
+                                                            int64_t startMilliseconds, int64_t endMilliseconds,
+                                                            size_t page, std::string& error);
 
-ConnectionHttpResponse SendConnectionRequest(const ConnectionHttpRequest& request,
-                                               const std::atomic_bool& cancelled);
+ConnectionHttpResponse SendConnectionRequest(const ConnectionHttpRequest& request, const std::atomic_bool& cancelled);
 
 // Atomically publishes destinationDirectory/usage.json only after complete pagination.
 // Cache schema remains compatible with the existing Cursor / TRAE native cache collectors.
 ConnectionSyncResult SyncConnection(const std::string& sourceId, const std::string& token,
-    const std::wstring& destinationDirectory, const std::atomic_bool& cancelled);
+                                    const std::wstring& destinationDirectory, const std::atomic_bool& cancelled);
 ConnectionSyncResult SyncConnection(const std::string& sourceId, const std::string& token,
-    const std::wstring& destinationDirectory, const std::atomic_bool& cancelled,
-    const ConnectionSyncOptions& options, const ConnectionTransport& transport);
+                                    const std::wstring& destinationDirectory, const std::atomic_bool& cancelled,
+                                    const ConnectionSyncOptions& options, const ConnectionTransport& transport);
 
 } // namespace tokenscope

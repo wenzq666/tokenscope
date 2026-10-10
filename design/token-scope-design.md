@@ -21,7 +21,7 @@
 15. 放弃独立托盘面板，保留托盘图标、悬停提示、打开主窗口及右键菜单；关闭主窗口继续后台统计。
 16. 热力图固定截至今天。点选历史日只更新选中框、当日摘要和下方列表，不移动格子、不改变热力图起止日期。每天自然推进一个日期格，显示窗口按固定宽度容纳历史。
 17. 趋势图点选同样只更新选中状态、当日摘要和下方列表，不移动柱形、不重新加载日期范围；只有明确的前后导航或周/月切换调整趋势范围。
-18. 更新时间采用北京 / 上海时区 UTC+8，展示清晰日期和时分秒，不直接显示 UTC ISO 字符串。
+18. 更新时间按系统时区展示清晰日期和时分秒并标注 UTC 偏移（与按天统计同一时区），不直接显示 UTC ISO 字符串。
 19. 未指定手动 USD/CNY 时采用最新公开日参考汇率，显示来源与公布日期；手动值优先，清空或 0 恢复自动。断网使用有效缓存并注明，暂无有效值时不虚构人民币费用。实现边界见 [自动汇率](../docs/exchange-rate.md)。
 20. 所有来源在设置显示默认候选本地文件/目录，逐项注明已发现/未发现。可点击查看完整路径、更改路径、选择文件或文件夹、恢复默认；自定义路径独占替代默认候选，缺失时不回退读取默认位置，修改和恢复不删除历史。
 21. 仅支持真实同步实现的 Cursor / TRAE 国际版提供手动凭据连接、同步、解除；这是实验性私有 Dashboard 接口，不是官方 OAuth，不自动读取浏览器 Cookie。其他来源提供接入说明或真实用量导入，不能靠授权按钮或积分虚构 Token。
@@ -216,7 +216,7 @@ v0.3 已实现公开参考价目自动匹配及用户主动联网更新。三源
 
 针对单个 EXE 不超过 10MB 的新要求，技术路线调整为 C++ / Win32 原生界面、Windows 系统图形与网络 API、编译进程序的 SQLite。首个目标平台为 Windows 10 / 11 x64；正式选择先通过含托盘、数据库、解析和联网能力的 Release 体积基线验证，具体见 [开发准备与体积计划](development-plan.md)。分层为来源发现/适配 → 标准化/去重 → 存储/聚合 → 窗口/托盘，采集不依赖窗口是否可见。
 
-当前每 15 秒检查已知本地来源目录，不触发远端账户同步；Codex / Claude Code 有持久增量检查点，新采集器目前通过稳定身份去重，并非全部实现逐文件增量。后续配合目录通知与低频补查，避免每秒全盘递归；远端来源退避，不过度请求。建议实体：Source、SourceInstance、UsageEvent、ModelIdentity、ImportCheckpoint、PriceVersion、FxSnapshot、Estimate、DailyAggregate、UiPreferences。联网扩展实体为 AgentCatalogEntry、DiscoveryCandidate、AdapterManifest、IconCache、OnlineLookupRecord；来源采集与联网查询互相独立，断网不阻塞本地统计。
+当前监听已发现本地来源目录的文件变化（每 5 分钟兜底检查），不触发远端账户同步；Codex / Claude Code 有持久增量检查点，新采集器目前通过稳定身份去重，并非全部实现逐文件增量。后续配合目录通知与低频补查，避免每秒全盘递归；远端来源退避，不过度请求。建议实体：Source、SourceInstance、UsageEvent、ModelIdentity、ImportCheckpoint、PriceVersion、FxSnapshot、Estimate、DailyAggregate、UiPreferences。联网扩展实体为 AgentCatalogEntry、DiscoveryCandidate、AdapterManifest、IconCache、OnlineLookupRecord；来源采集与联网查询互相独立，断网不阻塞本地统计。
 
 用量数据库只保存计量与身份元数据，不保存提示词、回复、代码正文或连接凭据；解析涉及完整日志时在内存提取字段，诊断脱敏。v0.4.0 手动连接凭据使用当前 Windows 用户 DPAPI 加密到独立本机文件，不从浏览器或发现过程扫描 Cookie/密钥。数据保留与清理管理继续作为完整设计目标。
 

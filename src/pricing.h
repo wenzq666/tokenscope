@@ -18,7 +18,7 @@ struct PricingRates {
     std::optional<int64_t> input, output, cacheRead, cacheWrite, cacheWrite1h, reasoning;
 };
 struct PricingTier {
-    int64_t threshold = 0; // Select the full-request tier from inclusive input tokens.
+    int64_t threshold = 0;  // Select the full-request tier from inclusive input tokens.
     bool inclusive = false; // false: input > threshold; true: input >= threshold.
     PricingRates rates;
 };
@@ -41,11 +41,11 @@ class PricingCatalog {
 public:
     explicit PricingCatalog(bool bundled = true);
     // Replace this feed atomically after complete validation; a bad/empty document preserves it.
-    bool LoadJson(PricingFeed feed, const std::string& json, const std::string& fetchedAt,
-                  std::string& error);
+    bool LoadJson(PricingFeed feed, const std::string& json, const std::string& fetchedAt, std::string& error);
     std::optional<PricingQuote> Lookup(const std::string& model, const std::string& provider,
-                                      const std::string& software = {}) const;
+                                       const std::string& software = {}) const;
     size_t Size() const;
+
 private:
     std::vector<PricingQuote> entries_;
 };

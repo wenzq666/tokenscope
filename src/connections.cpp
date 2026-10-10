@@ -1,9 +1,10 @@
 // Protocol/schema reference: missuo/tokens (MIT), independently implemented in native C++.
 // See docs/connections.md for the experimental dashboard API boundary and attribution.
 #include "connections.h"
+#include "i18n.h"
+#include "http.h"
 #include "yyjson.h"
 #include <windows.h>
-#include <winhttp.h>
 #include <algorithm>
 #include <array>
 #include <charconv>
@@ -23,24 +24,19 @@ constexpr size_t kPageBytes = 8 * 1024 * 1024;
 constexpr const char* kCursorUrl = "https://cursor.com/api/dashboard/get-filtered-usage-events";
 constexpr const char* kTraeUrl = "https://api-sg-central.trae.ai/trae/api/v1/pay/query_user_usage_group_by_session";
 using Document = std::unique_ptr<yyjson_doc, decltype(&yyjson_doc_free)>;
-template<class String> struct ScopedWipe {
+template <class String> struct ScopedWipe {
     String& text;
     ~ScopedWipe() {
         if (!text.empty()) SecureZeroMemory(text.data(), text.size() * sizeof(typename String::value_type));
     }
 };
 
-struct InternetHandle {
-    HINTERNET value = nullptr;
-    explicit InternetHandle(HINTERNET handle) : value(handle) {}
-    ~InternetHandle() { if (value) WinHttpCloseHandle(value); }
-    InternetHandle(const InternetHandle&) = delete;
-    InternetHandle& operator=(const InternetHandle&) = delete;
-};
 struct FileHandle {
     HANDLE value = INVALID_HANDLE_VALUE;
     explicit FileHandle(HANDLE handle) : value(handle) {}
-    ~FileHandle() { if (value != INVALID_HANDLE_VALUE) CloseHandle(value); }
+    ~FileHandle() {
+        if (value != INVALID_HANDLE_VALUE) CloseHandle(value);
+    }
 };
 
 std::string_view Text(yyjson_val* value) {
@@ -71,17 +67,22 @@ bool Counter(yyjson_val* value, int64_t& number, bool required = true) {
         if (text.empty()) return false;
         const auto [end, ec] = std::from_chars(text.data(), text.data() + text.size(), number);
         if (ec != std::errc() || end != text.data() + text.size()) return false;
-    } else return false;
+    } else
+        return false;
     return number >= 0 && number <= kCounterLimit;
 }
 bool SafeText(std::string_view value, size_t limit) {
     if (value.size() > limit) return false;
-    for (const unsigned char c : value) if (c < 0x20 || c == 0x7f) return false;
+    for (const unsigned char c : value)
+        if (c < 0x20 || c == 0x7f) return false;
     return true;
 }
 bool OptionalText(yyjson_val* object, const char* key, std::string& out, size_t limit = 1024) {
     auto* value = yyjson_obj_get(object, key);
-    if (!value || yyjson_is_null(value)) { out.clear(); return true; }
+    if (!value || yyjson_is_null(value)) {
+        out.clear();
+        return true;
+    }
     if (!yyjson_is_str(value) || !SafeText(Text(value), limit)) return false;
     out = Text(value);
     return true;
@@ -112,7 +113,10 @@ bool Window(int64_t start, int64_t end) {
 }
 uint64_t Hash(std::string_view text) {
     uint64_t value = 1469598103934665603ULL;
-    for (unsigned char c : text) { value ^= c; value *= 1099511628211ULL; }
+    for (unsigned char c : text) {
+        value ^= c;
+        value *= 1099511628211ULL;
+    }
     return value;
 }
 struct Page {
@@ -123,8 +127,8 @@ struct Page {
     std::vector<std::string> rows;
 };
 
-bool ParsePage(const std::string& source, const std::string& json, size_t pageNumber,
-               int64_t start, int64_t end, Page& page) {
+bool ParsePage(const std::string& source, const std::string& json, size_t pageNumber, int64_t start, int64_t end,
+               Page& page) {
     if (json.empty() || json.size() > kPageBytes) return false;
     yyjson_read_err error{};
     Document doc(yyjson_read_opts(const_cast<char*>(json.data()), json.size(), 0, nullptr, &error), yyjson_doc_free);
@@ -165,7 +169,8 @@ bool ParsePage(const std::string& source, const std::string& json, size_t pageNu
         int64_t timestamp = 0;
         if (!Counter(yyjson_obj_get(row, cursor ? "timestamp" : "usage_time"), timestamp) ||
             timestamp < (cursor ? 946684800000LL : 946684800LL) ||
-            timestamp > (cursor ? 253402300799999LL : 253402300799LL)) return false;
+            timestamp > (cursor ? 253402300799999LL : 253402300799LL))
+            return false;
         const int64_t milliseconds = cursor ? timestamp : timestamp * 1000;
         std::string model, identity, session;
         if (!OptionalText(row, cursor ? "model" : "model_name", model)) return false;
@@ -194,18 +199,20 @@ bool ParsePage(const std::string& source, const std::string& json, size_t pageNu
             !Counter(yyjson_obj_get(usage, cursor ? "outputTokens" : "output_token"), output) ||
             !Counter(yyjson_obj_get(usage, cursor ? "cacheReadTokens" : "cache_read_token"), read, false) ||
             !Counter(yyjson_obj_get(usage, cursor ? "cacheWriteTokens" : "cache_write_token"), write, false) ||
-            read > kCounterLimit - input || write > kCounterLimit - input - read) return false;
+            read > kCounterLimit - input || write > kCounterLimit - input - read)
+            return false;
         std::string serialized = "{";
         if (cursor) {
             if (!identity.empty()) serialized += "\"requestId\":" + Escape(identity) + ",";
             if (!session.empty()) serialized += "\"conversationId\":" + Escape(session) + ",";
             serialized += "\"timestamp\":" + std::to_string(timestamp) + ",\"model\":" + Escape(model) +
-                ",\"tokenUsage\":{\"inputTokens\":" + std::to_string(input) +
-                ",\"outputTokens\":" + std::to_string(output) +
-                ",\"cacheReadTokens\":" + std::to_string(read) +
-                ",\"cacheWriteTokens\":" + std::to_string(write) + "}}";
+                          ",\"tokenUsage\":{\"inputTokens\":" + std::to_string(input) +
+                          ",\"outputTokens\":" + std::to_string(output) +
+                          ",\"cacheReadTokens\":" + std::to_string(read) +
+                          ",\"cacheWriteTokens\":" + std::to_string(write) + "}}";
         } else {
-            serialized += "\"session_id\":" + Escape(identity) + ",\"usage_time\":" + std::to_string(timestamp) +
+            serialized +=
+                "\"session_id\":" + Escape(identity) + ",\"usage_time\":" + std::to_string(timestamp) +
                 ",\"model_name\":" + Escape(model) + ",\"extra_info\":{\"input_token\":" + std::to_string(input) +
                 ",\"output_token\":" + std::to_string(output) + ",\"cache_read_token\":" + std::to_string(read) +
                 ",\"cache_write_token\":" + std::to_string(write) + "}}";
@@ -220,15 +227,15 @@ bool ParsePage(const std::string& source, const std::string& json, size_t pageNu
     return true;
 }
 
-bool Publish(const std::filesystem::path& directory, const std::string& json,
-             const std::atomic_bool& cancelled, std::wstring& published) {
+bool Publish(const std::filesystem::path& directory, const std::string& json, const std::atomic_bool& cancelled,
+             std::wstring& published) {
     const auto target = directory / L"usage.json";
-    const auto pending = directory / (L"usage.pending." + std::to_wstring(GetCurrentProcessId()) +
-                                      L"." + std::to_wstring(GetTickCount64()));
+    const auto pending = directory / (L"usage.pending." + std::to_wstring(GetCurrentProcessId()) + L"." +
+                                      std::to_wstring(GetTickCount64()));
     bool written = false;
     {
-        FileHandle file(CreateFileW(pending.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_NEW,
-                                    FILE_ATTRIBUTE_TEMPORARY, nullptr));
+        FileHandle file(
+            CreateFileW(pending.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY, nullptr));
         if (file.value == INVALID_HANDLE_VALUE) return false;
         size_t offset = 0;
         while (offset < json.size() && !cancelled.load()) {
@@ -254,12 +261,12 @@ const std::vector<ConnectionProfile>& ConnectionProfiles() {
         {"cursor", "Cursor", "https://cursor.com/dashboard/usage",
          "先在自己的 Cursor 网页登录，按 F12 打开开发者工具，在 Network 的本人用量请求头 Cookie 中复制 WorkosCursorSessionToken 的值，粘贴到下方。不要复制其他 Cookie、账号密码或 API Key。"},
         {"trae-code", "TRAE 国际版", "https://www.trae.ai/account-setting",
-         "先在自己的 TRAE 国际版网页登录，按 F12 打开开发者工具，在 Network 的本人用量请求头中复制 Authorization 的 Cloud-IDE-JWT 值，粘贴到下方。国内版、TraeWork 和模型 API Key 不适用。"}
-    };
+         "先在自己的 TRAE 国际版网页登录，按 F12 打开开发者工具，在 Network 的本人用量请求头中复制 Authorization 的 Cloud-IDE-JWT 值，粘贴到下方。国内版、TraeWork 和模型 API Key 不适用。"}};
     return profiles;
 }
 const ConnectionProfile* FindConnectionProfile(const std::string& sourceId) {
-    for (const auto& profile : ConnectionProfiles()) if (profile.sourceId == sourceId) return &profile;
+    for (const auto& profile : ConnectionProfiles())
+        if (profile.sourceId == sourceId) return &profile;
     return nullptr;
 }
 
@@ -268,16 +275,23 @@ ConnectionHttpRequest::~ConnectionHttpRequest() {
         if (!header.second.empty()) SecureZeroMemory(header.second.data(), header.second.size());
 }
 
-std::optional<ConnectionHttpRequest> BuildConnectionRequest(const std::string& sourceId,
-    const std::string& token, int64_t startMilliseconds, int64_t endMilliseconds,
-    size_t page, std::string& error) {
+std::optional<ConnectionHttpRequest> BuildConnectionRequest(const std::string& sourceId, const std::string& token,
+                                                            int64_t startMilliseconds, int64_t endMilliseconds,
+                                                            size_t page, std::string& error) {
     error.clear();
-    if (!FindConnectionProfile(sourceId)) { error = "这个来源暂不支持账号连接，请使用本地日志或真实用量导出。"; return {}; }
+    if (!FindConnectionProfile(sourceId)) {
+        error = Tr8("这个来源暂不支持账号连接，请使用本地日志或真实用量导出。");
+        return {};
+    }
     auto secret = Secret(sourceId, token);
     ScopedWipe wipe{secret};
-    if (secret.empty()) { error = "请输入有效会话令牌，仅粘贴说明中指定的值，不要附加其他请求头。"; return {}; }
+    if (secret.empty()) {
+        error = Tr8("请输入有效会话令牌，仅粘贴说明中指定的值，不要附加其他请求头。");
+        return {};
+    }
     if (!Window(startMilliseconds, endMilliseconds) || page < 1 || page > 500) {
-        error = "同步日期范围无效，每次最多同步 30 天。"; return {};
+        error = Tr8("同步日期范围无效，每次最多同步 30 天。");
+        return {};
     }
     ConnectionHttpRequest request;
     request.headers = {{"Accept", "application/json"}, {"Content-Type", "application/json"}};
@@ -292,104 +306,92 @@ std::optional<ConnectionHttpRequest> BuildConnectionRequest(const std::string& s
         request.url = kTraeUrl;
         request.headers.emplace_back("Authorization", "Cloud-IDE-JWT " + secret);
         request.body = "{\"start_time\":" + std::to_string(startMilliseconds / 1000) +
-            ",\"end_time\":" + std::to_string(endMilliseconds / 1000) +
-            ",\"page_size\":20,\"page_num\":" + std::to_string(page) + ",\"usage_type\":[5,6]}";
+                       ",\"end_time\":" + std::to_string(endMilliseconds / 1000) +
+                       ",\"page_size\":20,\"page_num\":" + std::to_string(page) + ",\"usage_type\":[5,6]}";
     }
     return request;
 }
 
-ConnectionHttpResponse SendConnectionRequest(const ConnectionHttpRequest& request,
-                                               const std::atomic_bool& cancelled) {
+ConnectionHttpResponse SendConnectionRequest(const ConnectionHttpRequest& request, const std::atomic_bool& cancelled) {
     ConnectionHttpResponse result;
-    auto fail = [&]() { result.networkError = GetLastError(); if (!result.networkError) result.networkError = ERROR_INVALID_DATA; return result; };
     const bool cursor = request.url == kCursorUrl;
-    if ((!cursor && request.url != kTraeUrl) || request.method != "POST" ||
-        request.body.size() > 4096 || request.maxResponseBytes > kPageBytes ||
-        request.timeoutMilliseconds == 0 || request.timeoutMilliseconds > 15000 || cancelled.load()) {
+    if ((!cursor && request.url != kTraeUrl) || request.method != "POST" || request.body.size() > 4096 ||
+        request.maxResponseBytes > kPageBytes || request.timeoutMilliseconds == 0 ||
+        request.timeoutMilliseconds > 15000 || cancelled.load()) {
         result.networkError = cancelled.load() ? ERROR_CANCELLED : ERROR_INVALID_PARAMETER;
         return result;
     }
-    const wchar_t* host = cursor ? L"cursor.com" : L"api-sg-central.trae.ai";
-    const wchar_t* path = cursor ? L"/api/dashboard/get-filtered-usage-events" : L"/trae/api/v1/pay/query_user_usage_group_by_session";
-    InternetHandle session(WinHttpOpen(L"TokenScope/0.4.0", WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
-                                       WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0));
-    if (!session.value) return fail();
+    HttpsRequest https;
+    ScopedWipe wipeHeaders{https.headers};
+    https.host = cursor ? L"cursor.com" : L"api-sg-central.trae.ai";
+    https.path =
+        cursor ? L"/api/dashboard/get-filtered-usage-events" : L"/trae/api/v1/pay/query_user_usage_group_by_session";
+    https.method = L"POST";
+    https.body = request.body;
+    https.maxResponseBytes = request.maxResponseBytes;
+    https.hardened = true;
     const int timeout = static_cast<int>(request.timeoutMilliseconds);
-    if (!WinHttpSetTimeouts(session.value, std::min(5000, timeout), std::min(5000, timeout), timeout, timeout)) return fail();
-    InternetHandle connection(WinHttpConnect(session.value, host, INTERNET_DEFAULT_HTTPS_PORT, 0));
-    if (!connection.value) return fail();
-    InternetHandle handle(WinHttpOpenRequest(connection.value, L"POST", path, nullptr,
-                                            WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_SECURE));
-    if (!handle.value) return fail();
-    DWORD disabled = WINHTTP_DISABLE_REDIRECTS | WINHTTP_DISABLE_COOKIES | WINHTTP_DISABLE_AUTHENTICATION;
-    if (!WinHttpSetOption(handle.value, WINHTTP_OPTION_DISABLE_FEATURE, &disabled, sizeof(disabled))) return fail();
-    DWORD autologon = WINHTTP_AUTOLOGON_SECURITY_LEVEL_HIGH;
-    if (!WinHttpSetOption(handle.value, WINHTTP_OPTION_AUTOLOGON_POLICY, &autologon, sizeof(autologon))) return fail();
-    std::wstring headers;
-    ScopedWipe wipeHeaders{headers};
+    https.resolveTimeout = https.connectTimeout = std::min(5000, timeout);
+    https.sendTimeout = https.receiveTimeout = timeout;
+    auto& headers = https.headers;
     for (const auto& [name, value] : request.headers) {
-        if (name.empty() || name.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-") != std::string::npos ||
+        if (name.empty() ||
+            name.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-") != std::string::npos ||
             !SafeText(value, 20000) || value.find_first_of("\r\n") != std::string::npos) {
-            result.networkError = ERROR_INVALID_PARAMETER; return result;
+            result.networkError = ERROR_INVALID_PARAMETER;
+            return result;
         }
-        headers.append(name.begin(), name.end()); headers += L": ";
-        headers.append(value.begin(), value.end()); headers += L"\r\n";
+        headers.append(name.begin(), name.end());
+        headers += L": ";
+        headers.append(value.begin(), value.end());
+        headers += L"\r\n";
     }
-    if (cancelled.load()) { result.networkError = ERROR_CANCELLED; return result; }
-    if (!WinHttpSendRequest(handle.value, headers.c_str(), static_cast<DWORD>(headers.size()),
-            const_cast<char*>(request.body.data()), static_cast<DWORD>(request.body.size()),
-            static_cast<DWORD>(request.body.size()), 0) || !WinHttpReceiveResponse(handle.value, nullptr)) return fail();
-    DWORD status = 0, length = sizeof(status);
-    if (!WinHttpQueryHeaders(handle.value, WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
-                             WINHTTP_HEADER_NAME_BY_INDEX, &status, &length, WINHTTP_NO_HEADER_INDEX)) return fail();
-    result.status = status;
-    if (status != 200) return result; // Do not even retain authentication/error/redirect response bodies.
-    std::array<char, 65536> buffer{};
-    for (;;) {
-        if (cancelled.load()) { result.body.clear(); result.networkError = ERROR_CANCELLED; return result; }
-        DWORD bytes = 0;
-        if (!WinHttpReadData(handle.value, buffer.data(), static_cast<DWORD>(buffer.size()), &bytes)) return fail();
-        if (!bytes) break;
-        if (bytes > request.maxResponseBytes - std::min(request.maxResponseBytes, result.body.size())) {
-            result.body.clear(); result.networkError = ERROR_FILE_TOO_LARGE; return result;
-        }
-        result.body.append(buffer.data(), bytes);
-    }
+    // Authentication, error and redirect response bodies are never retained by SendHttps.
+    auto response = SendHttps(https, cancelled);
+    result.status = response.status;
+    result.networkError = response.networkError;
+    result.body = std::move(response.body);
     return result;
 }
 
 ConnectionSyncResult SyncConnection(const std::string& sourceId, const std::string& token,
-    const std::wstring& destinationDirectory, const std::atomic_bool& cancelled) {
+                                    const std::wstring& destinationDirectory, const std::atomic_bool& cancelled) {
     return SyncConnection(sourceId, token, destinationDirectory, cancelled, {}, SendConnectionRequest);
 }
 
 ConnectionSyncResult SyncConnection(const std::string& sourceId, const std::string& token,
-    const std::wstring& destinationDirectory, const std::atomic_bool& cancelled,
-    const ConnectionSyncOptions& options, const ConnectionTransport& transport) {
+                                    const std::wstring& destinationDirectory, const std::atomic_bool& cancelled,
+                                    const ConnectionSyncOptions& options, const ConnectionTransport& transport) {
     ConnectionSyncResult result;
-    auto fail = [&](const char* error) { result.error = error; result.cancelled = cancelled.load(); return result; };
+    auto fail = [&](const char* error) {
+        result.error = error;
+        result.cancelled = cancelled.load();
+        return result;
+    };
     try {
-        if (cancelled.load()) return fail("同步已取消，已有用量缓存已保留。");
-        if (!FindConnectionProfile(sourceId)) return fail("这个来源暂不支持账号连接，请使用本地日志或真实用量导出。");
+        if (cancelled.load()) return fail(Tr8("同步已取消，已有用量缓存已保留。"));
+        if (!FindConnectionProfile(sourceId))
+            return fail(Tr8("这个来源暂不支持账号连接，请使用本地日志或真实用量导出。"));
         auto secret = Secret(sourceId, token);
         ScopedWipe wipeSecret{secret};
-        if (secret.empty()) return fail("请输入有效会话令牌；尚未发送联网请求。");
+        if (secret.empty()) return fail(Tr8("请输入有效会话令牌；尚未发送联网请求。"));
         if (destinationDirectory.empty() || !transport || !options.maxPages || options.maxPages > 500 ||
             options.maxResponseBytes < 256 || options.maxResponseBytes > 64 * 1024 * 1024 ||
             !options.timeoutMilliseconds || options.timeoutMilliseconds > 120000)
-            return fail("同步限制或用量缓存目录无效。");
+            return fail(Tr8("同步限制或用量缓存目录无效。"));
         const auto now = std::chrono::system_clock::now().time_since_epoch();
-        const int64_t end = options.endMilliseconds ? options.endMilliseconds :
-            std::chrono::duration_cast<std::chrono::milliseconds>(now).count();
+        const int64_t end = options.endMilliseconds
+                                ? options.endMilliseconds
+                                : std::chrono::duration_cast<std::chrono::milliseconds>(now).count();
         const int64_t start = options.startMilliseconds ? options.startMilliseconds : end - 30 * kDay;
-        if (!Window(start, end)) return fail("同步日期范围无效，每次最多同步 30 天。");
+        if (!Window(start, end)) return fail(Tr8("同步日期范围无效，每次最多同步 30 天。"));
         const std::filesystem::path directory(destinationDirectory);
         std::error_code diskError;
         std::filesystem::create_directories(directory, diskError);
-        if (diskError) return fail("无法创建本机用量缓存目录。");
-        FileHandle lock(CreateFileW((directory / L"usage.sync.lock").c_str(), GENERIC_READ | GENERIC_WRITE,
-                                    0, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE, nullptr));
-        if (lock.value == INVALID_HANDLE_VALUE) return fail("正在执行另一次同步，或无法访问用量缓存目录。");
+        if (diskError) return fail(Tr8("无法创建本机用量缓存目录。"));
+        FileHandle lock(CreateFileW((directory / L"usage.sync.lock").c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr,
+                                    OPEN_ALWAYS, FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE, nullptr));
+        if (lock.value == INVALID_HANDLE_VALUE) return fail(Tr8("正在执行另一次同步，或无法访问用量缓存目录。"));
         const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(options.timeoutMilliseconds);
         size_t bytes = 0;
         std::optional<size_t> total;
@@ -397,72 +399,79 @@ ConnectionSyncResult SyncConnection(const std::string& sourceId, const std::stri
         std::vector<std::string> rows;
         bool completed = false;
         for (size_t pageNumber = 1; pageNumber <= options.maxPages; ++pageNumber) {
-            if (cancelled.load()) return fail("同步已取消，已有用量缓存已保留。");
-            const auto remaining = std::chrono::duration_cast<std::chrono::milliseconds>(deadline - std::chrono::steady_clock::now()).count();
-            if (remaining <= 0) return fail("同步超时，已有用量缓存已保留。");
+            if (cancelled.load()) return fail(Tr8("同步已取消，已有用量缓存已保留。"));
+            const auto remaining =
+                std::chrono::duration_cast<std::chrono::milliseconds>(deadline - std::chrono::steady_clock::now())
+                    .count();
+            if (remaining <= 0) return fail(Tr8("同步超时，已有用量缓存已保留。"));
             std::string planError;
             auto request = BuildConnectionRequest(sourceId, token, start, end, pageNumber, planError);
-            if (!request) return fail("无法创建厂商用量查询请求。");
+            if (!request) return fail(Tr8("无法创建厂商用量查询请求。"));
             request->timeoutMilliseconds = static_cast<unsigned>(std::min<int64_t>(15000, remaining));
-            if (bytes >= options.maxResponseBytes) return fail("下载用量超过大小限制，未保存不完整数据。");
+            if (bytes >= options.maxResponseBytes) return fail(Tr8("下载用量超过大小限制，未保存不完整数据。"));
             request->maxResponseBytes = std::min(kPageBytes, options.maxResponseBytes - bytes);
             auto response = transport(*request, cancelled);
             ++result.pages;
-            if (cancelled.load()) return fail("同步已取消，已有用量缓存已保留。");
-            if (response.networkError) return fail("用量请求失败或超时，已有缓存已保留。");
+            if (cancelled.load()) return fail(Tr8("同步已取消，已有用量缓存已保留。"));
+            if (response.networkError) return fail(Tr8("用量请求失败或超时，已有缓存已保留。"));
             if (response.status == 401 || response.status == 403) {
                 result.authenticationFailed = true;
-                return fail("会话过期、无访问权限或需要登录验证，请重新登录后输入新的会话令牌。");
+                return fail(Tr8("会话过期、无访问权限或需要登录验证，请重新登录后输入新的会话令牌。"));
             }
             if (response.status != 200) {
-                result.error = "用量服务返回 HTTP " + std::to_string(response.status) + "，已有缓存已保留。";
+                result.error = Tr8("用量服务返回 HTTP ") + std::to_string(response.status) + Tr8("，已有缓存已保留。");
                 return result;
             }
             if (response.body.size() > request->maxResponseBytes)
-                return fail("下载用量超过大小限制，未保存不完整数据。");
+                return fail(Tr8("下载用量超过大小限制，未保存不完整数据。"));
             bytes += response.body.size();
             Page page;
             if (!ParsePage(sourceId, response.body, pageNumber, start, end, page))
-                return fail("用量接口格式变化或数据无效，未保存不完整数据。");
+                return fail(Tr8("用量接口格式变化或数据无效，未保存不完整数据。"));
             if (page.total) {
-                if (total && total != page.total) return fail("分页过程中用量发生变化，请重试获取完整数据。");
+                if (total && total != page.total) return fail(Tr8("分页过程中用量发生变化，请重试获取完整数据。"));
                 total = page.total;
             }
             if (page.received && !pages.insert(page.signature).second)
-                return fail("用量服务重复返回同一页，未保存不完整数据。");
+                return fail(Tr8("用量服务重复返回同一页，未保存不完整数据。"));
             result.records += page.received;
             result.usageRecords += page.usage;
             for (auto& row : page.rows) {
-                if (row.find(secret) != std::string::npos)
-                    return fail("用量响应包含敏感内容，未保存缓存。");
+                if (row.find(secret) != std::string::npos) return fail(Tr8("用量响应包含敏感内容，未保存缓存。"));
                 rows.push_back(std::move(row));
             }
             if (total) {
                 if (result.records > *total || (!page.received && result.records < *total) ||
                     (page.hasNext && !*page.hasNext && result.records < *total) ||
                     (page.hasNext && *page.hasNext && result.records == *total))
-                    return fail("用量分页不完整或相互矛盾，未保存不完整数据。");
+                    return fail(Tr8("用量分页不完整或相互矛盾，未保存不完整数据。"));
                 completed = result.records == *total;
-            } else if (page.hasNext) completed = !*page.hasNext;
-            else completed = page.received == 0 || (sourceId == "cursor" && page.received < 500);
+            } else if (page.hasNext)
+                completed = !*page.hasNext;
+            else
+                completed = page.received == 0 || (sourceId == "cursor" && page.received < 500);
             if (completed) break;
             if (sourceId == "trae-code") {
-                for (int i = 0; i < 6 && !cancelled.load(); ++i) std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                for (int i = 0; i < 6 && !cancelled.load(); ++i)
+                    std::this_thread::sleep_for(std::chrono::milliseconds(50));
             }
         }
-        if (!completed) return fail("用量分页超过页数限制，未保存不完整数据。");
-        if (std::chrono::steady_clock::now() >= deadline) return fail("同步超时，已有用量缓存已保留。");
+        if (!completed) return fail(Tr8("用量分页超过页数限制，未保存不完整数据。"));
+        if (std::chrono::steady_clock::now() >= deadline) return fail(Tr8("同步超时，已有用量缓存已保留。"));
         std::string json = sourceId == "cursor" ? "{\"usageEventsDisplay\":[" : "[";
-        for (size_t i = 0; i < rows.size(); ++i) { if (i) json += ','; json += rows[i]; }
+        for (size_t i = 0; i < rows.size(); ++i) {
+            if (i) json += ',';
+            json += rows[i];
+        }
         json += sourceId == "cursor" ? "]}" : "]";
-        if (json.size() > options.maxResponseBytes) return fail("用量缓存超过大小限制，已有缓存已保留。");
+        if (json.size() > options.maxResponseBytes) return fail(Tr8("用量缓存超过大小限制，已有缓存已保留。"));
         if (!Publish(directory, json, cancelled, result.cachePath))
-            return fail("无法保存用量缓存或同步已取消，已有缓存已保留。");
+            return fail(Tr8("无法保存用量缓存或同步已取消，已有缓存已保留。"));
         result.success = true;
         return result;
     } catch (...) {
         // Exception text may include paths, headers or response bytes. Never propagate it.
-        return fail("同步失败，已有用量缓存已保留。");
+        return fail(Tr8("同步失败，已有用量缓存已保留。"));
     }
 }
 

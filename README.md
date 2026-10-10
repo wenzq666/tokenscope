@@ -1,14 +1,27 @@
 # TokenScope
 
-轻量 Windows 原生智能体用量统计工具，面向 Windows 10 / 11 x64。便携版只需一个 EXE，Release 发布上限为 **10,000,000 字节**；运行产生的数据库和缓存是独立用户数据。当前体积、SHA-256 和系统依赖见 [0.4.0 构建报告](dist/build-report.json)。
+[English](README.en.md) · 中文
 
-## v0.4.0
+<p align="center">
+  <img src="docs/images/overview-zh.png" width="49%" alt="用量总览（浅色）">
+  <img src="docs/images/overview-en-dark.png" width="49%" alt="Overview in English, dark theme">
+</p>
+
+## 快速上手
+
+1. 从 [Releases](https://github.com/wenzq666/tokenscope/releases/latest) 下载 `TokenScope.exe`，双击运行，无需安装。
+2. 首次启动自动发现本机 Codex、Claude Code、Cursor 等智能体的本地用量记录；有真实用量的软件才出现在列表里。
+3. 在“设置”中切换币种、外观（跟随系统 / 浅色 / 深色）、界面语言（跟随系统 / 中文 / English）、预算提醒，或为某个来源指定路径。关闭窗口后程序驻留托盘继续统计。
+
+轻量 Windows 原生智能体用量统计工具，面向 Windows 10 / 11 x64。便携版只需一个 EXE，Release 发布上限为 **10,000,000 字节**；运行产生的数据库和缓存是独立用户数据。当前体积、SHA-256 和系统依赖见 [0.5.0 构建报告](dist/build-report.json)。
+
+## v0.5.0
 
 下载完整发行包：[GitHub Releases](https://github.com/wenzq666/tokenscope/releases/latest)。仓库中的 `dist/` 同时保留可直接运行的 EXE、许可和校验文件。
 
-`dist/` 是正式发行目录。当前 Windows x64 发行文件为 [TokenScope.exe](dist/TokenScope.exe)，文件/产品版本 **0.4.0**，大小 **2,303,488 字节，约 2.30 MB**，通过 10 MB 门槛，仅依赖 Windows 系统 DLL。十五组自动化测试全部通过，包含原生窗口/托盘、配置升级和数据库兼容回归。旧版若正在运行，先从托盘右键退出，再打开新版；默认用户数据目录保持兼容。
+`dist/` 是正式发行目录。当前 Windows x64 发行文件为 [TokenScope.exe](dist/TokenScope.exe)，文件/产品版本 **0.5.0**，大小 **2,392,064 字节，约 2.39 MB**，通过 10 MB 门槛，仅依赖 Windows 系统 DLL，未进行代码签名。十五组自动化测试与翻译完整性检查全部通过。旧版若正在运行，先从托盘右键退出，再打开新版；默认用户数据目录保持兼容，数据库自动升级到架构 v7。本版新增深色模式、英文界面、预算提醒与文件变化监听，详见 [CHANGELOG](CHANGELOG.md)。
 
-SHA-256：`07375b7ec9bf21c0c01c27fad9597ef8d5a909145860f64d7b05a098973cab70`。
+SHA-256：`c3e1b074c6cf2a040b1a2c16b3695c10e2728d0d969b771e3771ca3c2a5f9c56`。
 
 - **真实用量与模型**：按软件、实际模型 ID、提供商和本地日期统计 Token 与预估费用。实际产生可计量记录的软件才进入统计列表，未知模型保留未知。
 - **56 个来源入口**：28 项已实现直接原生格式解析、3 项通过同步缓存解析、25 项需要真实用量导出。有采集器仍要求符合具体版本的格式、请求身份和日期条件，不表示本机有全部样本或 56 项全部自动采集。Copilot 须启用并实际落盘请求级 OTel；Antigravity 继续读取已有缓存，Cursor 和 TRAE 国际版另有实验性手动凭据同步。[逐项范围](design/support-coverage.md)。
@@ -19,7 +32,9 @@ SHA-256：`07375b7ec9bf21c0c01c27fad9597ef8d5a909145860f64d7b05a098973cab70`。
 - **可靠计费口径**：缓存与推理只计一次；长上下文按实际请求输入长度选择整次请求档位。手动费率优先用于新请求和未定价记录，已定价历史及同请求后续增长继续使用固定价目。分项或费率缺失保持未知。[计费说明](docs/pricing-reference.md)。
 - **固定图表日期**：进入主窗口先显示趋势图。点选趋势或热力图某天，只筛选当天的软件与模型用量，不移动图表、向前加载日期或改变起止区间；趋势日期由显式翻页/范围按钮切换，热力图截至今天按日推进，未采集日期为空白格。
 - **用量展示**：今日、近 7 天、本月、全部；同软件内按模型分行，跨软件模型页，软件/模型占比条，以及普通输入、普通输出、缓存读取、缓存写入、推理、未分类的互斥分桶。使用 38 个品牌图标资源，缺少专属资源的来源使用通用图形。
-- **托盘与偏好**：保留托盘图标、悬停摘要和右键菜单，单击打开主窗口，关闭窗口隐藏到托盘；已移除托盘面板。支持 USD / CNY、自动公开汇率和手动覆盖、趋势/热力图独立颜色、CSV 导出。主窗口及托盘更新时间使用北京时间 UTC+8，显示中文日期和清晰时分秒。
+- **托盘与偏好**：保留托盘图标、悬停摘要和右键菜单，单击打开主窗口，关闭窗口隐藏到托盘；已移除托盘面板。支持 USD / CNY、自动公开汇率和手动覆盖、趋势/热力图独立颜色、CSV 导出。更新时间按系统时区显示并标注 UTC 偏移，与按天统计使用同一时区。
+- **外观与语言**：深色模式可跟随 Windows 或固定浅色 / 深色，标题栏同步切换；界面支持中文与英文，默认跟随 Windows 显示语言。
+- **预算提醒**：可设每日 / 每月预估费用上限（USD 或 CNY），达到 80% 与 100% 时各以托盘通知提醒一次；按标准 API 价格估算，未定价用量不计入。
 - **本地优先**：SQLite 保存用量元数据、去重身份、检查点和价目版本，不保存对话正文、工具参数或连接凭据。主动配置的连接凭据单独 DPAPI 加密；模型价目由用户主动更新，没有手动汇率时异步获取公开 USD/CNY 日参考价，不上传日志、软件清单或对话。
 
 项目参考 [missuo/tokens](https://github.com/missuo/tokens) 的采集、计费和展示思路，并根据厂商实际字段与公开规则修正口径。采用原生 C++ / Win32，没有嵌入网页或引入 Rust、Node、.NET 运行时。[参考与差异](docs/tokens-reference.md)。自动搜索全新智能体、通用云端账号连接和动态适配器更新仍未实现；两个特定 Dashboard 同步通道不代表其他来源也能授权，价目目录增加模型不会自动生成采集器。
@@ -38,11 +53,11 @@ SHA-256：`07375b7ec9bf21c0c01c27fad9597ef8d5a909145860f64d7b05a098973cab70`。
 | `pricing-openrouter.json` | 主动更新的 OpenRouter 公开费率缓存 |
 | `model-catalog.json` | 主动更新的 models.dev 公开模型及费率缓存 |
 | `*.json.date` | 对应公开目录的获取时间 |
-| `exchange-rate.json` / `.date` | 校验后的公开 USD/CNY 日参考价 / 北京日期的最近成功获取日 |
+| `exchange-rate.json` / `.date` | 校验后的公开 USD/CNY 日参考价 / 本地日期的最近成功获取日 |
 
 旧版 ANSI 设置文件会升级为 UTF-16LE，以保留 Unicode 路径，同时保留未识别的配置节；路径保存失败时回滚本次更改。相对 `--data-dir` 在启动时解析为绝对目录。
 
-首次读取历史可能需要一些时间，窗口与托盘独立响应。随后每 15 秒检查本地来源文件，可在设置关闭自动刷新，或在托盘右键暂停；该定时检查不发起远端账户同步。Codex / Claude Code 使用持久增量检查点；其他来源通过元数据指纹跳过未变化的文件或目录，并在变化时受限重读、按稳定请求身份去重，SQLite 指纹包含 WAL 变化。各格式尚未全部实现逐文件偏移增量读取。
+首次读取历史可能需要一些时间，窗口与托盘独立响应。之后监听已发现来源目录的文件变化，变化后数秒内增量读取（两次读取至少间隔 10 秒），另每 5 分钟兜底检查一次，以覆盖尚不存在的目录或不支持变化通知的位置。可在设置关闭自动刷新，或在托盘右键暂停；本地检查不发起远端账户同步。退出时会中止进行中的网络请求，不必等待超时。Codex / Claude Code 使用持久增量检查点；其他来源通过元数据指纹跳过未变化的文件或目录，并在变化时受限重读、按稳定请求身份去重，SQLite 指纹包含 WAL 变化。各格式尚未全部实现逐文件偏移增量读取。
 
 只有总 Token、没有可靠输入/输出分项的记录保留为“未分类 Token”，仍进入真实总量，但不会假拆分后估价。软件缓存仅有上下文占用、费用、积分或缺少逐日时间的会话累计时，需要真实用量导出。来源管理显示这些状态，用量列表只显示有效记录。
 
@@ -64,7 +79,18 @@ powershell -ExecutionPolicy Bypass -File scripts/test.ps1
 
 脚本只为当前子进程指定执行策略，不修改系统策略。Release 使用优化、LTO、静态 C++ 库与 SQLite，去除调试符号，并检查大小及系统 DLL 依赖。源码、工具和测试的磁盘占用不代表成品体积。PNG / ICO 与精简价目已版本化，正常构建无需 Node、Python、浏览器或网络。
 
-上述发布命令生成 `dist/TokenScope.exe` 和 `dist/build-report.json`。省略 `-ExecutableName` 时本地构建使用默认名称 `TokenScope.exe`。测试涵盖核心、来源、计费、汇率、路径配置、连接、DPAPI 凭据、离屏视图及真实原生窗口，共十五组。更新内置价目可使用 `scripts/update-pricing-reference.ps1`，来源、日期和摘要在 `vendor/pricing-sources.json`。
+上述发布命令生成 `dist/TokenScope.exe` 和 `dist/build-report.json`。省略 `-ExecutableName` 时本地构建使用默认名称 `TokenScope.exe`。测试涵盖核心、来源、计费、汇率、路径配置、连接、DPAPI 凭据、离屏视图（含英文与深色）及真实原生窗口，共十五组；`test.ps1` 还会运行 `scripts/check-translations.ps1`，确保每条界面文字都有英文翻译。代码风格由根目录 `.clang-format` 定义。
+
+发行版可选 Authenticode 签名，需要 Windows SDK 的 `signtool.exe`：
+
+```powershell
+# 证书在当前用户证书存储中
+powershell -ExecutionPolicy Bypass -File scripts/build.ps1 -ExecutableName TokenScope.exe -SignCertificateThumbprint <指纹>
+# 或使用 .pfx，密码从环境变量 TOKENSCOPE_SIGN_PASSWORD 读取
+powershell -ExecutionPolicy Bypass -File scripts/build.ps1 -ExecutableName TokenScope.exe -SignPfx C:\path\cert.pfx
+```
+
+签名在去除符号之后、计算 SHA-256 之前进行，`build-report.json` 的 `signed` 字段记录结果。更新内置价目可使用 `scripts/update-pricing-reference.ps1`，来源、日期和摘要在 `vendor/pricing-sources.json`。
 
 ## 诊断命令
 

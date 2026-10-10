@@ -22,7 +22,8 @@ bool UniqueObject(yyjson_val* value) {
     yyjson_val *key, *child;
     yyjson_obj_foreach(value, index, count, key, child) {
         const auto text = Text(key);
-        for (const auto previous : keys) if (previous == text) return false;
+        for (const auto previous : keys)
+            if (previous == text) return false;
         keys.push_back(text);
     }
     return true;
@@ -33,8 +34,7 @@ bool ValidDate(std::string_view date) {
     for (size_t i = 0; i < date.size(); ++i) {
         if (i != 4 && i != 7 && (date[i] < '0' || date[i] > '9')) return false;
     }
-    const int year = (date[0] - '0') * 1000 + (date[1] - '0') * 100 +
-                     (date[2] - '0') * 10 + date[3] - '0';
+    const int year = (date[0] - '0') * 1000 + (date[1] - '0') * 100 + (date[2] - '0') * 10 + date[3] - '0';
     const int month = (date[5] - '0') * 10 + date[6] - '0';
     const int day = (date[8] - '0') * 10 + date[9] - '0';
     if (year < 1999 || month < 1 || month > 12 || day < 1) return false;
@@ -57,20 +57,17 @@ const char* ExchangeRateSource() {
     return "Frankfurter / ECB";
 }
 
-std::optional<ExchangeRateQuote> ParseExchangeRateJson(const std::string& json,
-                                                      std::string& error) {
+std::optional<ExchangeRateQuote> ParseExchangeRateJson(const std::string& json, std::string& error) {
     error.clear();
     if (json.empty() || json.size() > kMaxResponseBytes)
         return Fail(error, "Exchange rate response is empty or exceeds 64 KiB.");
     yyjson_read_err diagnostic{};
-    Document doc(yyjson_read_opts(const_cast<char*>(json.data()), json.size(), 0,
-                                 nullptr, &diagnostic), yyjson_doc_free);
+    Document doc(yyjson_read_opts(const_cast<char*>(json.data()), json.size(), 0, nullptr, &diagnostic),
+                 yyjson_doc_free);
     if (!doc) return Fail(error, "Exchange rate response is not valid JSON.");
     auto* root = yyjson_doc_get_root(doc.get());
-    if (!UniqueObject(root))
-        return Fail(error, "Exchange rate response must be an object with unique keys.");
-    if (Text(yyjson_obj_get(root, "base")) != "USD")
-        return Fail(error, "Exchange rate base must be USD.");
+    if (!UniqueObject(root)) return Fail(error, "Exchange rate response must be an object with unique keys.");
+    if (Text(yyjson_obj_get(root, "base")) != "USD") return Fail(error, "Exchange rate base must be USD.");
     const auto date = Text(yyjson_obj_get(root, "date"));
     if (!ValidDate(date)) return Fail(error, "Exchange rate date is invalid.");
 
@@ -86,12 +83,10 @@ std::optional<ExchangeRateQuote> ParseExchangeRateJson(const std::string& json,
     } else {
         if (!yyjson_is_num(amount) || yyjson_get_num(amount) != 1.0)
             return Fail(error, "Legacy exchange rate amount must be exactly one USD.");
-        if (!UniqueObject(rates))
-            return Fail(error, "Legacy exchange rate currencies are invalid or ambiguous.");
+        if (!UniqueObject(rates)) return Fail(error, "Legacy exchange rate currencies are invalid or ambiguous.");
         value = yyjson_obj_get(rates, "CNY");
     }
-    if (!yyjson_is_num(value))
-        return Fail(error, "USD/CNY exchange rate must be a JSON number.");
+    if (!yyjson_is_num(value)) return Fail(error, "USD/CNY exchange rate must be a JSON number.");
     const double rate = yyjson_get_num(value);
     // Broad corruption bounds for this specific currency pair, not a guessed fallback rate.
     if (!std::isfinite(rate) || rate < 0.01 || rate > 1000.0)

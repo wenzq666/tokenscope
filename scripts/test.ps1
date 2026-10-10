@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param([ValidateSet('Release', 'Debug')][string]$Configuration = 'Release', [string]$ToolchainRoot)
 $ErrorActionPreference = 'Stop'
+& (Join-Path $PSScriptRoot 'check-translations.ps1')
 $buildArgs = @{ Configuration = $Configuration; Tests = $true; SkipApp = $true }
 if (Test-Path -LiteralPath (Join-Path $PSScriptRoot '..\tests\view_tests.cpp')) { $buildArgs.ViewTests = $true }
 if ($ToolchainRoot) { $buildArgs.ToolchainRoot = $ToolchainRoot }

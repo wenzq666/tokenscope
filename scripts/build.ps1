@@ -5,7 +5,13 @@ param(
     [ValidatePattern('^TokenScope(?:-[0-9]+\.[0-9]+\.[0-9]+)?\.exe$')][string]$ExecutableName = 'TokenScope.exe',
     [switch]$Tests,
     [switch]$ViewTests,
-    [switch]$SkipApp
+    [switch]$SkipApp,
+    # Optional Authenticode signing. Use a certificate from the current user's store by thumbprint,
+    # or a .pfx file whose password is read from the TOKENSCOPE_SIGN_PASSWORD environment variable.
+    [string]$SignCertificateThumbprint,
+    [string]$SignPfx,
+    [string]$TimestampUrl = 'http://timestamp.digicert.com',
+    [string]$SignTool
 )
 
 $ErrorActionPreference = 'Stop'
@@ -73,7 +79,7 @@ try {
     $exchangeObject = Join-Path $buildDir 'exchange.o'
     Invoke-Compiler $cxx ($cxxFlags + @('-c', 'src/exchange.cpp', '-o', $exchangeObject))
     $dataObjects += $exchangeObject
-    foreach ($module in @('connections','credentials')) {
+    foreach ($module in @('connections','credentials','http','i18n')) {
         $moduleObject = Join-Path $buildDir "$module.o"
         Invoke-Compiler $cxx ($cxxFlags + @('-c', "src/$module.cpp", '-o', $moduleObject))
         $dataObjects += $moduleObject
@@ -86,19 +92,53 @@ try {
 
     if ((-not $SkipApp) -or $ViewTests -or $Tests) {
         $resourceObject = Join-Path $buildDir 'app-resource.o'
-        $resourceFlags = @('-I', 'resources', '-i', 'resources/app.rc', '-o', $resourceObject, '-O', 'coff', '--codepage=65001')
+        $resourceFlags = @('-I', 'resources', '-I', 'src', '-i', 'resources/app.rc', '-o', $resourceObject, '-O', 'coff', '--codepage=65001')
         if (Test-Path -LiteralPath 'resources/app.ico') { $resourceFlags += '-DTOKENSCOPE_HAVE_ICON=1' }
         Invoke-Compiler $windres $resourceFlags
         $viewObject = Join-Path $buildDir 'view.o'
         Invoke-Compiler $cxx ($cxxFlags + @('-c', 'src/view.cpp', '-o', $viewObject))
     }
+    # Native shell modules (window, tray, dialogs, workers). Linked by the app and by main_ui_tests.
+    $shellObjects = @()
+    if ((-not $SkipApp) -or $Tests) {
+        foreach ($module in @('state', 'settings', 'workers', 'watcher', 'budget', 'theme', 'dialogs', 'sources', 'window')) {
+            $shellObject = Join-Path $buildDir "shell-$module.o"
+            Invoke-Compiler $cxx ($cxxFlags + @('-c', "src/shell/$module.cpp", '-o', $shellObject))
+            $shellObjects += $shellObject
+        }
+    }
     if (-not $SkipApp) {
         $mainObject = Join-Path $buildDir 'main.o'
         Invoke-Compiler $cxx ($cxxFlags + @('-c', 'src/main.cpp', '-o', $mainObject))
         $exe = Join-Path $distDir $ExecutableName
-        Invoke-Compiler $cxx (@($mainObject, $viewObject, $resourceObject) + $dataObjects +
+        Invoke-Compiler $cxx (@($mainObject, $viewObject, $resourceObject) + $shellObjects + $dataObjects +
             $linkFlags + @('-municode', '-mwindows', '-o', $exe) + $systemLibraries)
         if ($Configuration -eq 'Release') { Invoke-Compiler $strip @('--strip-all', $exe) }
+        $signed = $false
+        if ($SignCertificateThumbprint -or $SignPfx) {
+            # Sign after stripping and before hashing, so the report describes the shipped bytes.
+            if (-not $SignTool) {
+                $kits = Join-Path ${env:ProgramFiles(x86)} 'Windows Kits/10/bin'
+                $SignTool = Get-ChildItem -LiteralPath $kits -Filter signtool.exe -Recurse -ErrorAction SilentlyContinue |
+                    Where-Object { $_.Directory.Name -eq 'x64' } | Sort-Object FullName -Descending |
+                    Select-Object -First 1 -ExpandProperty FullName
+            }
+            if (-not $SignTool -or -not (Test-Path -LiteralPath $SignTool)) {
+                throw 'signtool.exe not found. Install the Windows SDK or pass -SignTool <path>.'
+            }
+            $signArgs = @('sign', '/fd', 'SHA256', '/tr', $TimestampUrl, '/td', 'SHA256', '/d', 'TokenScope')
+            if ($SignPfx) {
+                if (-not $env:TOKENSCOPE_SIGN_PASSWORD) { throw 'Set TOKENSCOPE_SIGN_PASSWORD for -SignPfx.' }
+                $signArgs += @('/f', $SignPfx, '/p', $env:TOKENSCOPE_SIGN_PASSWORD)
+            } else {
+                $signArgs += @('/sha1', $SignCertificateThumbprint)
+            }
+            & $SignTool @($signArgs + @($exe))
+            if ($LASTEXITCODE -ne 0) { throw "Code signing failed ($LASTEXITCODE)." }
+            & $SignTool verify /pa $exe | Out-Null
+            if ($LASTEXITCODE -ne 0) { throw 'Signature verification failed.' }
+            $signed = $true
+        }
         $file = Get-Item -LiteralPath $exe
         $sizeGatePassed = $file.Length -le 10000000
         if (($Configuration -eq 'Release') -and (-not $sizeGatePassed)) { throw "EXE size gate failed: $($file.Length) bytes exceeds 10,000,000." }
@@ -121,7 +161,7 @@ try {
             product = 'TokenScope'; executable = $ExecutableName; configuration = $Configuration; architecture = 'x64';
             bytes = $file.Length; maximumBytes = 10000000; sizeGatePassed = $sizeGatePassed;
             sha256 = (Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash.ToLowerInvariant();
-            imports = $importNames; toolchain = 'LLVM-MinGW 20261006 UCRT x86_64';
+            imports = $importNames; toolchain = 'LLVM-MinGW 20261006 UCRT x86_64'; signed = $signed;
             builtAtUtc = [DateTime]::UtcNow.ToString('o')
         }
         $reportName = if ($ExecutableName -eq 'TokenScope.exe') { 'build-report.json' } else { [IO.Path]::GetFileNameWithoutExtension($ExecutableName) + '.build-report.json' }
@@ -136,10 +176,10 @@ try {
                 $linkFlags + @('-o', (Join-Path $buildDir "$testName.exe")) + $systemLibraries)
         }
         # Exercises the actual native dialogs and preference lifecycle in its
-        # own test process; it includes main.cpp and must not link main.o.
+        # own test process; it links the shell modules but not main.o (wWinMain).
         $mainUiObject = Join-Path $buildDir 'main_ui_tests.o'
         Invoke-Compiler $cxx ($testFlags + @('-c', 'tests/main_ui_tests.cpp', '-o', $mainUiObject))
-        Invoke-Compiler $cxx (@($mainUiObject, $viewObject, $resourceObject) + $dataObjects +
+        Invoke-Compiler $cxx (@($mainUiObject, $viewObject, $resourceObject) + $shellObjects + $dataObjects +
             $linkFlags + @('-o', (Join-Path $buildDir 'main_ui_tests.exe')) + $systemLibraries)
     }
     if ($ViewTests) {
